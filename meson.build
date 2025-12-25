@@ -11,6 +11,9 @@ gmock_dep = gtest_proj.get_variable('gmock_dep')
 json_proj = subproject('nlohmann_json')
 json_dep = dependency('nlohmann_json', fallback : ['nlohmann_json', 'nlohmann_json_dep'])
 
+# Add PostgreSQL client library
+pqxx_dep = dependency('libpqxx')
+
 # Add threads for parallelization later and DB drivers
 thread_dep = dependency('threads')
 # For later: sqlite_dep = dependency('sqlite3')
@@ -23,14 +26,19 @@ core_sources = files(
   'src/core/IntegerSet.cpp'
 )
 storage_sources = files(
-  'src/storage/IntegerSetSerializer.cpp'
+  'src/storage/IntegerSetSerializer.cpp',
+  'src/storage/PostgresRepository.cpp'
+)
+test_sources = files(
+    'tests/test_main.cpp',
+    'tests/set_tests.cpp',
 )
 
 # 4. Library (The "Engine" of your lab)
 lib_set = static_library('integer_set',
   [core_sources, storage_sources],
   include_directories : inc,
-  dependencies : [json_dep]
+  dependencies : [json_dep, pqxx_dep]
 )
 
 # 5. Executables (The "Wraps")
@@ -42,11 +50,10 @@ executable('lab1_console',
 
 # 6. Tests (TDD focus)
 test_exe = executable('run_tests',
-  'tests/test_main.cpp',
-  'tests/set_tests.cpp',
-  link_with : lib_set,
-  include_directories : inc,
-  dependencies : [gtest_dep, gmock_dep]
+    test_sources,
+    link_with : lib_set,
+    include_directories : inc,
+    dependencies : [gtest_dep]
 )
 
 test('Set logic tests', test_exe)
