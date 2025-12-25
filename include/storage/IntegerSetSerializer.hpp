@@ -4,9 +4,9 @@
 #include "core/IntegerSet.hpp"
 #include <nlohmann/json.hpp>
 
-namespace SetStorage {
-    nlohmann::json serialize(const IntegerSet& set);
-    std::unique_ptr<IntegerSet> deserialize(const nlohmann::json& j);
+namespace SetSerializer {
+    nlohmann::json to_json(const IntegerSet& set);
+    std::unique_ptr<IntegerSet> from_json(const nlohmann::json& j);
 }
 
 #endif
