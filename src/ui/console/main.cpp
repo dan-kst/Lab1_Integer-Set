@@ -53,6 +53,29 @@ void displaySet(const IntegerSet& set)
     }
     std::cout << " }" << std::endl;
 }
+
+void handleDatabase(IntegerSet& currentSet, ISetRepository& repo, bool isSave)
+{
+    if (isSave)
+    {
+        size_t id = repo.save(currentSet);
+        std::cout << "Set saved successfully with ID: " << id << std::endl;
+    }
+    else
+    {
+        int id;
+        std::cout << "Enter the ID of the set to load: ";
+        if (std::cin >> id)
+        {
+            auto loadedSet = repo.load(id);
+            if (loadedSet)
+            {
+                currentSet = *loadedSet; // Rule of Three in action!
+                std::cout << "Set loaded!" << std::endl;
+            }
+        }
+    }
+}
 int main() {
     std::unique_ptr<ISetRepository> repo = std::make_unique<PostgresRepository>();
     IntegerSet currentSet;
@@ -70,8 +93,10 @@ int main() {
                 displaySet(currentSet);
                 break;
             case 3:
+                handleDatabase(currentSet, *repo, true);
                 break;
             case 4:
+                handleDatabase(currentSet, *repo, false);
                 break;
             case 5:
                 break;
