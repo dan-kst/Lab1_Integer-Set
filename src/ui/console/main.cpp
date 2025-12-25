@@ -15,7 +15,44 @@ void printMainMenu()
           << "0. Exit\n"
           << "Choice: ";
 }
+// Version B: The "Worker" function
+void handleAdd(IntegerSet& set, std::stringstream& ss)
+{
+    int value;
+    while (ss >> value)
+    {
+        set.add(value);
+    }
+    std::cout << "Added elements. New size: " << set.size() << std::endl;
+}
+// Version A: The "UI" function for the Integer Menu
+void handleAdd(IntegerSet& set)
+{
+    std::cout << "Enter integers separated by spaces: ";
+    std::string line;
+    std::getline(std::cin >> std::ws, line);
+    
+    std::stringstream ss(line);
+    handleAdd(set, ss); // Delegate to the worker
+}
 
+void displaySet(const IntegerSet& set)
+{
+    std::vector<int> elements = set.toVector(); // Get data from the model
+    
+    if (elements.empty())
+    {
+        std::cout << "The set is currently empty. 📭" << std::endl;
+        return;
+    }
+
+    std::cout << "Current Set: { ";
+    for (size_t i = 0; i < elements.size(); ++i)
+    {
+        std::cout << elements[i] << (i == elements.size() - 1 ? "" : ", ");
+    }
+    std::cout << " }" << std::endl;
+}
 int main() {
     std::unique_ptr<ISetRepository> repo = std::make_unique<PostgresRepository>();
     IntegerSet currentSet;
@@ -27,8 +64,10 @@ int main() {
         switch(choice)
         {
             case 1:
+                handleAdd(currentSet);
                 break;
             case 2:
+                displaySet(currentSet);
                 break;
             case 3:
                 break;
