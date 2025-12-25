@@ -32,6 +32,7 @@ storage_sources = files(
 test_sources = files(
     'tests/test_main.cpp',
     'tests/set_tests.cpp',
+    'tests/storage_tests.cpp'
 )
 
 # 4. Library (The "Engine" of your lab)
@@ -53,7 +54,7 @@ test_exe = executable('run_tests',
     test_sources,
     link_with : lib_set,
     include_directories : inc,
-    dependencies : [gtest_dep]
+    dependencies : [gtest_dep, gmock_dep, pqxx_dep]
 )
 
 test('Set logic tests', test_exe)
