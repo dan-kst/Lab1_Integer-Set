@@ -3,7 +3,7 @@
 
 PostgresRepository::~PostgresRepository(){}
 
-void PostgresRepository::save(const IntegerSet& set, int id) {
+size_t PostgresRepository::save(const IntegerSet& set) {
     // 1. Connect to the DB (Use the credentials from your docker-compose)
     pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};
     pqxx::work txn{c};
@@ -12,13 +12,14 @@ void PostgresRepository::save(const IntegerSet& set, int id) {
     std::string jsonData = SetSerializer::to_json(set).dump();
 
     // 3. Execute SQL
-    c.prepare("insert_set", "INSERT INTO sets (id, data) VALUES ($1, $2) "
-                           "ON CONFLICT (id) DO UPDATE SET data = $2");
-    txn.exec_prepared("insert_set", id, jsonData);
+    c.prepare("insert_set", "INSERT INTO sets (data) VALUES ($1) RETURNING id");
+    pqxx::row r = txn.exec_prepared1("insert_set", jsonData);
+    // 4. Close connection and return results
     txn.commit();
+    return r[0].as<int>();
 }
 
-std::unique_ptr<IntegerSet> PostgresRepository::load(int id)
+std::unique_ptr<IntegerSet> PostgresRepository::load(size_t id)
 {
     // 1. Connect to the DB (Use the credentials from your docker-compose)
     pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};

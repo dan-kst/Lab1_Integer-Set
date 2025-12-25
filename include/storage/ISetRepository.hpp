@@ -5,7 +5,7 @@
 class ISetRepository {
 public:
     virtual ~ISetRepository() = default;
-    virtual void save(const IntegerSet& set, int id) = 0;
-    virtual std::unique_ptr<IntegerSet> load(int id) = 0;
+    virtual size_t save(const IntegerSet& set) = 0;
+    virtual std::unique_ptr<IntegerSet> load(size_t id) = 0;
 };
 #endif

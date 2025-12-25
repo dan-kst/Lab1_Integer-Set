@@ -7,8 +7,8 @@
 class PostgresRepository : public ISetRepository{
 public:
     virtual ~PostgresRepository();
-    void save(const IntegerSet& set, int id) override;
-    std::unique_ptr<IntegerSet> load(int id) override;
+    size_t save(const IntegerSet& set) override;
+    std::unique_ptr<IntegerSet> load(size_t id) override;
 };
 
 #endif
