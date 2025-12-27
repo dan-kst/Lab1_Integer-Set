@@ -1,8 +1,9 @@
-#ifndef ISETREPOSITORY_HPP
-#define ISETREPOSITORY_HPP
-#include "core/IntegerSet.hpp"
+#ifndef I_SET_REPOSITORY_HPP
+#define I_SET_REPOSITORY_HPP
+#include "./core/IntegerSet.hpp"
 
-class ISetRepository {
+class ISetRepository
+{
 public:
     virtual ~ISetRepository() = default;
     virtual size_t save(const IntegerSet& set) = 0;
