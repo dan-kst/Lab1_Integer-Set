@@ -22,12 +22,15 @@ thread_dep = dependency('threads')
 inc = include_directories('include')
 
 # 3. Sources
+ui_sources = files(
+    'src/ui/console/ConsoleWrapUI.cpp'
+)
 core_sources = files(
-  'src/core/IntegerSet.cpp'
+    'src/core/IntegerSet.cpp'
 )
 storage_sources = files(
-  'src/storage/IntegerSetSerializer.cpp',
-  'src/storage/PostgresRepository.cpp'
+    'src/storage/IntegerSetSerializer.cpp',
+    'src/storage/PostgresRepository.cpp'
 )
 test_sources = files(
     'tests/test_main.cpp',
@@ -37,16 +40,16 @@ test_sources = files(
 
 # 4. Library (The "Engine" of your lab)
 lib_set = static_library('integer_set',
-  [core_sources, storage_sources],
-  include_directories : inc,
-  dependencies : [json_dep, pqxx_dep]
+    [core_sources, storage_sources, ui_sources],
+    include_directories : inc,
+    dependencies : [json_dep, pqxx_dep]
 )
 
 # 5. Executables (The "Wraps")
 executable('lab1_console',
-  'src/ui/console/main.cpp',
-  link_with : lib_set,
-  include_directories : inc
+    'src/ui/console/main.cpp',
+    link_with : lib_set,
+    include_directories : inc
 )
 
 # 6. Tests (TDD focus)
