@@ -3,7 +3,7 @@
 namespace SetSerializer{
     nlohmann::json to_json(const IntegerSet& set)
     {
-        return nlohmann::json{{valueName, set.toVector()}};
+        return nlohmann::json{valueName, set.toVector()};
     }
     std::unique_ptr<IntegerSet> from_json(const nlohmann::json& j)
     {
