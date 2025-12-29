@@ -27,21 +27,20 @@ void ConsoleWrapUI::showSetElements()
     }
 }
 // handleCreate "worker" function
-void ConsoleWrapUI::addSetElements(std::istringstream& input)
+void ConsoleWrapUI::addSetElements(std::istringstream& input, IntegerSet& set)
 {
     int value;
     while (input >> value && (!input.fail()))
     {
-        currentSet_->add(value);
+        set.add(value);
     }
     if(input.fail() && !input.eof())
     {
         std::cout << "Error! Set requires an integer arguments.\n";
-        input.clear();
     }
     else
     {
-        std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
+        input.clear();
     }
 }
 
@@ -73,6 +72,10 @@ void ConsoleWrapUI::Launch()
             case 2:
                 showSetElements();
                 break;
+        // Edit
+            case 3:
+                handleUpdate();
+                break;
             default:
                 std::cout << "Entered wrong value!\n ";
                 break;
@@ -80,13 +83,26 @@ void ConsoleWrapUI::Launch()
     }
 }
 // CRUD operations
+void ConsoleWrapUI::handleUpdate()
+{
+    std::unique_ptr<IntegerSet> editSet = std::make_unique<IntegerSet>();
+    showSetElements();
+    std::cout << "Enter integers separated by spaces or leave prompt empty to: ";
+    handleRead(std::cin, input_);
+    addSetElements(input_, *editSet);
+    if(editSet->size() > 0)
+    {
+        *currentSet_ = *editSet;
+        std::cout << "Set have been updated! Current size: " << currentSet_->size() << std::endl;
+    }
+    std::cout << "Editing have been cancelled\n";
+}
 // Write into string stream
-void ConsoleWrapUI::handleRead(std::istream& input)
+void ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputString)
 {
     std::string inputStr;
-    std::getline(input >> std::ws, inputStr, '\n');
-    input_.str(inputStr);
-    input_.seekg(0);
+    std::getline(input >> std::noskipws, inputStr);
+    inputString.str(inputStr);
 }
 // Write into an integer
 void ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
@@ -103,6 +119,7 @@ void ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
 void ConsoleWrapUI::handleCreate()
 {
     std::cout << "Enter integers separated by spaces: ";
-    handleRead(std::cin);
-    addSetElements(input_);
+    handleRead(std::cin, input_);
+    addSetElements(input_, *currentSet_);
+    std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
 }

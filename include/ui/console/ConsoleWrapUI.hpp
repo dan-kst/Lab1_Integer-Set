@@ -12,11 +12,12 @@
 class ConsoleWrapUI
 {
 private:
-    constexpr static std::array<std::string, 3> mainMenuOptions_ =
+    constexpr static std::array<std::string, 4> mainMenuOptions_ =
     {
         "Exit",     //0
         "Create",   //1
         "Show",     //2
+        "Edit",     //3
     };
     std::istringstream input_;
 // wrap own functions
@@ -24,7 +25,7 @@ private:
     void displayMenu(const std::array<std::string, N>& options);
     void showSetElements();
 // handleCreate "worker" function
-    void addSetElements(std::istringstream& input);
+    void addSetElements(std::istringstream& input, IntegerSet& set);
 
 protected:
     std::shared_ptr<ISetRepository> repo_;
@@ -35,8 +36,9 @@ public:
 // Launcher
     void Launch();
 // CRUD operations
+    void handleUpdate();
 // Write into string stream
-    void handleRead(std::istream& input);
+    void handleRead(std::istream& input, std::istringstream& inputString);
 // Write into an integer
     void handleRead(std::istream& input, size_t& inputValue);
     void handleCreate();
