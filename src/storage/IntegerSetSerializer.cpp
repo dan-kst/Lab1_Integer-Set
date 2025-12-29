@@ -8,7 +8,7 @@ namespace SetSerializer{
     std::unique_ptr<IntegerSet> from_json(const nlohmann::json& j)
     {
         std::unique_ptr<IntegerSet> set = std::make_unique<IntegerSet>();
-        auto vec = j.at(valueName).get<std::vector<int>>();
+        auto vec = j.at(1).get<std::vector<int>>();
         for(int x : vec) 
         {
             set->add(x);
