@@ -43,6 +43,25 @@ void ConsoleWrapUI::addSetElements(std::istringstream& input, IntegerSet& set)
         input.clear();
     }
 }
+// handleLoadFromDb "worker" function
+bool ConsoleWrapUI::loadSet(int id, IntegerSet& set)
+{
+    try
+    {
+        auto loadedSet = repo_->load(id);
+        if (loadedSet)
+        {
+            set = *loadedSet; // Rule of Three in action!
+            std::cout << "\nSet loaded!" << std::endl;
+            return true;
+        }
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Error! Cannot load entry: " << e.what() << std::endl;
+    }
+    return false;
+}
 
 
 
@@ -75,6 +94,14 @@ void ConsoleWrapUI::Launch()
         // Edit
             case 3:
                 handleUpdate();
+                break;
+        // Save
+            case 4:
+                handleSaveToDb();
+                break;
+        // Load
+            case 5:
+                handleLoadFromDb();
                 break;
             default:
                 std::cout << "Entered wrong value!\n ";
@@ -122,4 +149,29 @@ void ConsoleWrapUI::handleCreate()
     handleRead(std::cin, input_);
     addSetElements(input_, *currentSet_);
     std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
+}
+// Operations with database
+void ConsoleWrapUI::handleSaveToDb()
+{
+    try
+    {
+        size_t id = repo_->save(*currentSet_);
+        std::cout << "Set saved successfully with ID: " << id << std::endl;
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Error! Cannot save entry: " << e.what() << std::endl;
+    }
+}
+void ConsoleWrapUI::handleLoadFromDb()
+{
+    size_t id = std::string::npos;
+    std::cout << "Enter the ID of the set to load: ";
+    handleRead(std::cin, id);
+    if(id != std::string::npos)
+    {
+        input_.str(std::to_string(id));
+        input_.seekg(0);
+        loadSet(id, *currentSet_);
+    }
 }
