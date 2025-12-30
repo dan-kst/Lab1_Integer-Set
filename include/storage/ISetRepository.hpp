@@ -8,5 +8,6 @@ public:
     virtual ~ISetRepository() = default;
     virtual size_t save(const IntegerSet& set) = 0;
     virtual std::unique_ptr<IntegerSet> load(size_t id) = 0;
+    virtual void update(const IntegerSet& set, size_t id) = 0;
 };
 #endif
