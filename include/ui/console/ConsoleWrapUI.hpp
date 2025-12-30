@@ -22,6 +22,7 @@ private:
         "Load"      //5
     };
     std::istringstream input_;
+    size_t setId_;
 // wrap own functions
     template<size_t N>
     void displayMenu(const std::array<std::string, N>& options);

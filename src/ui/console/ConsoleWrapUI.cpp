@@ -52,7 +52,6 @@ bool ConsoleWrapUI::loadSet(int id, IntegerSet& set)
         if (loadedSet)
         {
             set = *loadedSet; // Rule of Three in action!
-            std::cout << "\nSet loaded!" << std::endl;
             return true;
         }
     }
@@ -66,7 +65,7 @@ bool ConsoleWrapUI::loadSet(int id, IntegerSet& set)
 
 
 // Constructor
-ConsoleWrapUI::ConsoleWrapUI(std::shared_ptr<ISetRepository> repo) : repo_(repo)
+ConsoleWrapUI::ConsoleWrapUI(std::shared_ptr<ISetRepository> repo) : setId_(0), repo_(repo) 
 {
     currentSet_ = std::make_unique<IntegerSet>();
 }
@@ -112,17 +111,27 @@ void ConsoleWrapUI::Launch()
 // CRUD operations
 void ConsoleWrapUI::handleUpdate()
 {
-    std::unique_ptr<IntegerSet> editSet = std::make_unique<IntegerSet>();
-    showSetElements();
-    std::cout << "Enter integers separated by spaces or leave prompt empty to: ";
-    handleRead(std::cin, input_);
-    addSetElements(input_, *editSet);
-    if(editSet->size() > 0)
+    if(setId_)
     {
-        *currentSet_ = *editSet;
-        std::cout << "Set have been updated! Current size: " << currentSet_->size() << std::endl;
+        std::unique_ptr<IntegerSet> editSet = std::make_unique<IntegerSet>();
+        showSetElements();
+        std::cout << "Enter integers separated by spaces or leave prompt empty to: ";
+        handleRead(std::cin, input_);
+        addSetElements(input_, *editSet);
+        if(editSet->size() > 0)
+        {
+            *currentSet_ = *editSet;
+            std::cout << "Set have been updated! Current size: " << currentSet_->size() << std::endl;
+        }
+        else
+        {
+            std::cout << "Editing have been cancelled\n";
+        }
     }
-    std::cout << "Editing have been cancelled\n";
+    else
+    {
+        std::cout << "Cannot edit locally created set.\n";
+    }
 }
 // Write into string stream
 void ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputString)
@@ -148,6 +157,7 @@ void ConsoleWrapUI::handleCreate()
     std::cout << "Enter integers separated by spaces: ";
     handleRead(std::cin, input_);
     addSetElements(input_, *currentSet_);
+    setId_ = 0;
     std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
 }
 // Operations with database
@@ -155,12 +165,21 @@ void ConsoleWrapUI::handleSaveToDb()
 {
     try
     {
-        size_t id = repo_->save(*currentSet_);
-        std::cout << "Set saved successfully with ID: " << id << std::endl;
+        std::cout << "Try to save/update with ID '" << setId_ << "' ..." << std::endl;
+        if(setId_)
+        {
+            repo_->update(*currentSet_, setId_);
+            std::cout << "Set updated successfully with ID: " << setId_ << std::endl;
+        }
+        else
+        {
+            setId_ = repo_->save(*currentSet_);
+            std::cout << "New set saved successfully with ID: " << setId_ << std::endl;
+        }
     }
     catch(std::exception& e)
     {
-        std::cout << "Error! Cannot save entry: " << e.what() << std::endl;
+        std::cout << "Error! Cannot save/update entry: " << e.what() << std::endl;
     }
 }
 void ConsoleWrapUI::handleLoadFromDb()
@@ -168,10 +187,11 @@ void ConsoleWrapUI::handleLoadFromDb()
     size_t id = std::string::npos;
     std::cout << "Enter the ID of the set to load: ";
     handleRead(std::cin, id);
-    if(id != std::string::npos)
+    input_.str(std::to_string(id));
+    input_.seekg(0);
+    if(loadSet(id, *currentSet_))
     {
-        input_.str(std::to_string(id));
-        input_.seekg(0);
-        loadSet(id, *currentSet_);
+        setId_ = id;
+        std::cout << "\nSet with ID '" << setId_ << "' was loaded successfully!" << std::endl;
     }
 }
