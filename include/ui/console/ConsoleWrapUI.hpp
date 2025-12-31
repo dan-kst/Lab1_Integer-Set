@@ -37,6 +37,8 @@ private:
     void showSetElements();
 // handleCreate "worker" function
     void addSetElements(std::istringstream& input, IntegerSet& set);
+// handleUpdate "worker" function
+    bool updateSet(std::istringstream& input);
 // handleLoadFromDb "worker" function
     bool loadSet(int id, IntegerSet& set);
 // IntegerSet "worker" operations

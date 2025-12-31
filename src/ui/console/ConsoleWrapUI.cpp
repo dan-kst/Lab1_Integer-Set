@@ -61,6 +61,22 @@ bool ConsoleWrapUI::loadSet(int id, IntegerSet& set)
     }
     return false;
 }
+bool ConsoleWrapUI::updateSet(std::istringstream& input)
+{
+    std::unique_ptr<IntegerSet> editSet = std::make_unique<IntegerSet>();
+    addSetElements(input, *editSet);
+    if(editSet->size() > 0)
+    {
+        *currentSet_ = *editSet;
+        std::cout << "Set have been updated! Current size: " << currentSet_->size() << std::endl;
+        return true;
+    }
+    else
+    {
+        std::cout << "Editing have been cancelled\n";
+        return false;
+    }
+}
 // IntegerSet "worker" operations
 void ConsoleWrapUI::unionSets(size_t setOtherId)
 {
@@ -97,7 +113,7 @@ ConsoleWrapUI::ConsoleWrapUI(std::shared_ptr<ISetRepository> repo) : setId_(0), 
 // Launcher
 void ConsoleWrapUI::Launch()
 {
-    size_t choice = std::string::npos;
+    size_t choice = mainMenuOptions_.size();
     while(choice)
     {
         displayMenu(mainMenuOptions_);
@@ -119,7 +135,7 @@ void ConsoleWrapUI::Launch()
             case 3:
                 handleUpdate();
                 break;
-                // Operate
+        // Operate
             case 4:
                 choice = std::string::npos;
                 while(choice)
@@ -128,14 +144,17 @@ void ConsoleWrapUI::Launch()
                     handleRead(std::cin, choice);
                     switch(choice)
                     {
+                    // Union
                         case 1:
                             handleUnion();
                             choice = 0;
                             break;
+                    // Intersect
                         case 2:
                             handleIntersect();
                             choice = 0;
                             break;
+                    // Difference
                         case 3:
                             handleDifference();
                             choice = 0;
@@ -145,7 +164,7 @@ void ConsoleWrapUI::Launch()
                             break;
                     }
                 }
-                choice = 4;
+                choice = mainMenuOptions_.size();
                 break;
         // Save
             case 5:
@@ -166,20 +185,13 @@ void ConsoleWrapUI::handleUpdate()
 {
     if(setId_)
     {
-        std::unique_ptr<IntegerSet> editSet = std::make_unique<IntegerSet>();
         showSetElements();
         std::cout << "Enter integers separated by spaces or leave prompt empty to: ";
-        handleRead(std::cin, input_);
-        addSetElements(input_, *editSet);
-        if(editSet->size() > 0)
+        if(!handleRead(std::cin, input_))
         {
-            *currentSet_ = *editSet;
-            std::cout << "Set have been updated! Current size: " << currentSet_->size() << std::endl;
+            std::cout << "Editing have been cancelled.\n";
         }
-        else
-        {
-            std::cout << "Editing have been cancelled\n";
-        }
+        updateSet(input_);
     }
     else
     {
