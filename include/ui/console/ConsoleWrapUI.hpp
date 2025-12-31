@@ -12,14 +12,22 @@
 class ConsoleWrapUI
 {
 private:
-    constexpr static std::array<std::string, 6> mainMenuOptions_ =
+    constexpr static std::array<std::string, 7> mainMenuOptions_ =
     {
         "Exit",     //0
         "Create",   //1
         "Show",     //2
         "Edit",     //3
-        "Save",     //4
-        "Load"      //5
+        "Operate",  //4
+        "Save",     //5
+        "Load"      //6
+    };
+    constexpr static std::array<std::string, 4> operateMenuOptions_ =
+    {
+        "Back",         //0
+        "Unite",        //1
+        "Intersect",    //2
+        "Different"     //3
     };
     std::istringstream input_;
     size_t setId_;
@@ -31,6 +39,10 @@ private:
     void addSetElements(std::istringstream& input, IntegerSet& set);
 // handleLoadFromDb "worker" function
     bool loadSet(int id, IntegerSet& set);
+// IntegerSet "worker" operations
+    void unionSets(size_t setOtherId);
+    void intersectSets(size_t setOtherId);
+    void differenceSets(size_t setOtherId);
 
 protected:
     std::shared_ptr<ISetRepository> repo_;
@@ -50,5 +62,9 @@ public:
 // Operations with database
     void handleSaveToDb();
     void handleLoadFromDb();
+// IntegerSet "UI" operations
+    void handleUnion();
+    void handleIntersect();
+    void handleDifference();
 };
 #endif

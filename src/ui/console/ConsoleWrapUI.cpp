@@ -61,6 +61,31 @@ bool ConsoleWrapUI::loadSet(int id, IntegerSet& set)
     }
     return false;
 }
+// IntegerSet "worker" operations
+void ConsoleWrapUI::unionSets(size_t setOtherId)
+{
+    auto setOther = std::make_unique<IntegerSet>();
+    if(loadSet(setOtherId, *setOther))
+    {
+        *currentSet_ = *(currentSet_->unite(*setOther));
+    }
+}
+void ConsoleWrapUI::intersectSets(size_t setOtherId)
+{
+    auto setOther = std::make_unique<IntegerSet>();
+    if(loadSet(setOtherId, *setOther))
+    {
+        *currentSet_ = *(currentSet_->intersect(*setOther));
+    }
+}
+void ConsoleWrapUI::differenceSets(size_t setOtherId)
+{
+    auto setOther = std::make_unique<IntegerSet>();
+    if(loadSet(setOtherId, *setOther))
+    {
+        *currentSet_ = *(currentSet_->difference(*setOther));
+    }
+}
 
 
 
@@ -73,7 +98,7 @@ ConsoleWrapUI::ConsoleWrapUI(std::shared_ptr<ISetRepository> repo) : setId_(0), 
 void ConsoleWrapUI::Launch()
 {
     size_t choice = std::string::npos;
-    while(choice != 0)
+    while(choice)
     {
         displayMenu(mainMenuOptions_);
         handleRead(std::cin, choice);
@@ -94,12 +119,40 @@ void ConsoleWrapUI::Launch()
             case 3:
                 handleUpdate();
                 break;
-        // Save
+                // Operate
             case 4:
+                choice = std::string::npos;
+                while(choice)
+                {
+                    displayMenu(operateMenuOptions_);
+                    handleRead(std::cin, choice);
+                    switch(choice)
+                    {
+                        case 1:
+                            handleUnion();
+                            choice = 0;
+                            break;
+                        case 2:
+                            handleIntersect();
+                            choice = 0;
+                            break;
+                        case 3:
+                            handleDifference();
+                            choice = 0;
+                            break;
+                        default:
+                            std::cout << "Entered wrong value!\n ";
+                            break;
+                    }
+                }
+                choice = 4;
+                break;
+        // Save
+            case 5:
                 handleSaveToDb();
                 break;
         // Load
-            case 5:
+            case 6:
                 handleLoadFromDb();
                 break;
             default:
@@ -193,5 +246,51 @@ void ConsoleWrapUI::handleLoadFromDb()
     {
         setId_ = id;
         std::cout << "\nSet with ID '" << setId_ << "' was loaded successfully!" << std::endl;
+    }
+}
+// IntegerSet "UI" operations
+void ConsoleWrapUI::handleUnion()
+{
+    size_t id = 0;
+    std::cout << "Enter the ID of the set to unite: ";
+    handleRead(std::cin, id);
+    if(id)
+    {
+        unionSets(id);
+        std::cout << "Union operation was successful!\n\n";
+    }
+    else
+    {
+        std::cout << "Cannot unite sets.\n";
+    }
+}
+void ConsoleWrapUI::handleIntersect()
+{
+    size_t id = 0;
+    std::cout << "Enter the ID of the set to intersect: ";
+    handleRead(std::cin, id);
+    if(id)
+    {
+        intersectSets(id);
+        std::cout << "Intersect operation was successful!\n\n";
+    }
+    else
+    {
+        std::cout << "Cannot intersect sets.\n";
+    }
+}
+void ConsoleWrapUI::handleDifference()
+{
+    size_t id = 0;
+    std::cout << "Enter the ID of the set to difference: ";
+    handleRead(std::cin, id);
+    if(id)
+    {
+        differenceSets(id);
+        std::cout << "Difference operation was successful!\n\n";
+    }
+    else
+    {
+        std::cout << "Cannot difference sets.\n";
     }
 }
