@@ -84,6 +84,11 @@ void ConsoleWrapUI::unionSets(size_t setOtherId)
     if(loadSet(setOtherId, *setOther))
     {
         *currentSet_ = *(currentSet_->unite(*setOther));
+        std::cout << "Union operation was successful!\n\n";
+    }
+    else
+    {
+        std::cout << "Cannot unite sets.\n";
     }
 }
 void ConsoleWrapUI::intersectSets(size_t setOtherId)
@@ -92,6 +97,11 @@ void ConsoleWrapUI::intersectSets(size_t setOtherId)
     if(loadSet(setOtherId, *setOther))
     {
         *currentSet_ = *(currentSet_->intersect(*setOther));
+        std::cout << "Intersect operation was successful!\n\n";
+    }
+    else
+    {
+        std::cout << "Cannot intersect sets.\n";
     }
 }
 void ConsoleWrapUI::differenceSets(size_t setOtherId)
@@ -100,6 +110,11 @@ void ConsoleWrapUI::differenceSets(size_t setOtherId)
     if(loadSet(setOtherId, *setOther))
     {
         *currentSet_ = *(currentSet_->difference(*setOther));
+        std::cout << "Difference operation was successful!\n\n";
+    }
+    else
+    {
+        std::cout << "Cannot difference sets.\n";
     }
 }
 
@@ -270,11 +285,6 @@ void ConsoleWrapUI::handleUnion()
     if(handleRead(std::cin, setId_))
     {
         unionSets(setId_);
-        std::cout << "Union operation was successful!\n\n";
-    }
-    else
-    {
-        std::cout << "Cannot unite sets.\n";
     }
 }
 void ConsoleWrapUI::handleIntersect()
@@ -283,11 +293,6 @@ void ConsoleWrapUI::handleIntersect()
     if(handleRead(std::cin, setId_))
     {
         intersectSets(setId_);
-        std::cout << "Intersect operation was successful!\n\n";
-    }
-    else
-    {
-        std::cout << "Cannot intersect sets.\n";
     }
 }
 void ConsoleWrapUI::handleDifference()
@@ -296,10 +301,5 @@ void ConsoleWrapUI::handleDifference()
     if(handleRead(std::cin, setId_))
     {
         differenceSets(setId_);
-        std::cout << "Difference operation was successful!\n\n";
-    }
-    else
-    {
-        std::cout << "Cannot difference sets.\n";
     }
 }
