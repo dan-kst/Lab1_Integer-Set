@@ -10,6 +10,7 @@ public:
     size_t save(const IntegerSet& set) override;
     std::unique_ptr<IntegerSet> load(size_t id) override;
     void update(const IntegerSet& set, size_t id) override;
+    void remove(size_t id) override;
 };
 
 #endif

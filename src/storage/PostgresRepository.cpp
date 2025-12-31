@@ -46,3 +46,9 @@ void PostgresRepository::update(const IntegerSet& setUpdated, size_t id)
     txn.exec_params0("UPDATE sets SET data=$1 WHERE id=$2", jsonData, id);
     txn.commit();
 }
+void PostgresRepository::remove(size_t id) {
+    pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};
+    pqxx::work txn{c};
+    txn.exec_params0("DELETE FROM sets WHERE id=$1", id);
+    txn.commit();
+}

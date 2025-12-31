@@ -9,6 +9,7 @@ public:
     MOCK_METHOD(size_t, save, (const IntegerSet& set), (override));
     MOCK_METHOD(std::unique_ptr<IntegerSet>, load, (size_t id), (override));
     MOCK_METHOD(void, update, (const IntegerSet& setUpdate, size_t id), (override));
+    MOCK_METHOD(void, remove, (size_t id), (override));
 };
 
 TEST(StorageTest, AppCallsSaveMethod) {
