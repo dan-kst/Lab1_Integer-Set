@@ -12,7 +12,7 @@
 class ConsoleWrapUI
 {
 private:
-    constexpr static std::array<std::string, 7> mainMenuOptions_ =
+    constexpr static std::array<std::string, 8> mainMenuOptions_ =
     {
         "Exit",     //0
         "Create",   //1
@@ -20,7 +20,8 @@ private:
         "Edit",     //3
         "Operate",  //4
         "Save",     //5
-        "Load"      //6
+        "Load",     //6
+        "Bash-mode" //7
     };
     constexpr static std::array<std::string, 4> operateMenuOptions_ =
     {
@@ -35,12 +36,13 @@ private:
     template<size_t N>
     void displayMenu(const std::array<std::string, N>& options);
     void showSetElements();
+    void runCommandMode();
 // handleCreate "worker" function
     void addSetElements(std::istringstream& input, IntegerSet& set);
-// handleUpdate "worker" function
-    bool updateSet(std::istringstream& input);
 // handleLoadFromDb "worker" function
     bool loadSet(int id, IntegerSet& set);
+// handleUpdate "worker" function
+    bool updateSet(std::istringstream& input);
 // IntegerSet "worker" operations
     void unionSets(size_t setOtherId);
     void intersectSets(size_t setOtherId);

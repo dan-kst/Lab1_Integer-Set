@@ -26,6 +26,99 @@ void ConsoleWrapUI::showSetElements()
         std::cout << "Current Set: " << elements << std::endl;
     }
 }
+// Bash-like mode
+void ConsoleWrapUI::runCommandMode()
+{
+    std::string commandLine;
+    std::cout << "Entering Command Mode (type 'exit' to return to menu)\n";
+    auto currentSetCopy = std::make_unique<IntegerSet>();
+    if(currentSet_->size() > 0)
+        *currentSetCopy = *currentSet_;
+    bool hasError = false;
+    do
+    {
+        if(!commandLine.empty())
+        {
+            input_.str(commandLine);
+            input_.clear();
+            std::string action;
+            while (std::getline(input_ >> std::ws, commandLine, '&'))
+            {
+                if(!commandLine.empty())
+                {
+                    std::istringstream commandInput(commandLine);
+                    std::getline(commandInput >> std::ws, action, ' ');
+                    if (action == "create")
+                    {
+                        addSetElements(commandInput, *currentSet_);
+                    }
+                    else if (action == "show")
+                    {
+                        showSetElements();
+                    }
+                    else if (action == "edit")
+                    {
+                        if(!updateSet(commandInput))
+                        {
+                            hasError = true;
+                            break;
+                        }
+                    }
+                    else if (action == "save")
+                    {
+                        handleSaveToDb();
+                    }
+                    else if (action == "load")
+                    {
+                        if(!handleRead(commandInput, setId_))
+                        {
+                            hasError = true;
+                            break;
+                        }
+                        loadSet(setId_, *currentSet_);
+                    }
+                    else if (action == "union")
+                    {
+                        if(!handleRead(commandInput, setId_))
+                        {
+                            hasError = true;
+                            break;
+                        }
+                        unionSets(setId_);
+                    }
+                    else if (action == "intersect")
+                    {
+                        if(!handleRead(commandInput, setId_))
+                        {
+                            hasError = true;
+                            break;
+                        }
+                        intersectSets(setId_);
+                    }
+                    else if (action == "difference")
+                    {
+                        if(handleRead(commandInput, setId_))
+                        {
+                            hasError = true;
+                            break;
+                        }
+                        differenceSets(setId_);
+                    }
+                    else
+                    {
+                        std::cout << "Error! Unknown command " << action << std::endl;
+                    }
+                }
+            }
+        }
+        std::cout << "$ ";
+    }while (std::getline(std::cin >> std::noskipws, commandLine) && commandLine != "exit" && !hasError);
+    
+    if(hasError)
+    {
+        *currentSet_ = *currentSetCopy;
+    }
+}
 // handleCreate "worker" function
 void ConsoleWrapUI::addSetElements(std::istringstream& input, IntegerSet& set)
 {
@@ -188,6 +281,10 @@ void ConsoleWrapUI::Launch()
         // Load
             case 6:
                 handleLoadFromDb();
+                break;
+        // Bash-mode
+            case 7:
+                runCommandMode();
                 break;
             default:
                 std::cout << "Entered wrong value!\n ";
