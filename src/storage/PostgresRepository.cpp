@@ -33,7 +33,7 @@ std::unique_ptr<IntegerSet> PostgresRepository::load(size_t id)
 
     return SetSerializer::from_json(jsonDataObj);
 }
-void PostgresRepository::update(const IntegerSet& setUpdated, size_t id)
+bool PostgresRepository::update(const IntegerSet& setUpdated, size_t id)
 {
     // 1. Connect to the DB (Use the credentials from your docker-compose)
     pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};
@@ -43,12 +43,16 @@ void PostgresRepository::update(const IntegerSet& setUpdated, size_t id)
     std::string jsonData = SetSerializer::to_json(setUpdated).dump();
 
     // 3. Execute SQL
-    txn.exec_params0("UPDATE sets SET data=$1 WHERE id=$2", jsonData, id);
+    pqxx::result result = txn.exec_params0("UPDATE sets SET data=$1 WHERE id=$2", jsonData, id);
+    bool wasUpdated = result.affected_rows();
     txn.commit();
+    return wasUpdated;
 }
-void PostgresRepository::remove(size_t id) {
+bool PostgresRepository::remove(size_t id) {
     pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};
     pqxx::work txn{c};
-    txn.exec_params0("DELETE FROM sets WHERE id=$1", id);
+    pqxx::result result = txn.exec_params0("DELETE FROM sets WHERE id=$1", id);
+    bool wasUpdated = result.affected_rows();
     txn.commit();
+    return wasUpdated;
 }
