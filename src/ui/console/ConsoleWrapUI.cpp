@@ -6,6 +6,7 @@ void ConsoleWrapUI::displayMenu(const std::array<std::string, N>& options)
 {
     size_t optionsSize = N;
     std::string suffix(" set");
+    std::cout << std::endl;
     for(size_t i = 1; i < optionsSize; i++)
     {
         std::cout << std::to_string(i) << ". "  << options[i] << suffix << std::endl;
@@ -225,70 +226,79 @@ void ConsoleWrapUI::Launch()
     while(choice)
     {
         displayMenu(mainMenuOptions_);
-        handleRead(std::cin, choice);
-        switch(choice)
+        if(handleRead(std::cin, choice))
         {
-        // Exit
-            case 0:
+            switch(choice)
+            {
+            // Exit
+                case 0:
                 break;
-        // Create
-            case 1:
-                handleCreate();
+            // Create
+                case 1:
+                    handleCreate();
                 break;
-        // Show
-            case 2:
-                showSetElements();
+            // Show
+                case 2:
+                    showSetElements();
                 break;
-        // Edit
-            case 3:
-                handleUpdate();
+            // Edit
+                case 3:
+                    handleUpdate();
                 break;
-        // Operate
-            case 4:
-                choice = std::string::npos;
-                while(choice)
-                {
-                    displayMenu(operateMenuOptions_);
-                    handleRead(std::cin, choice);
-                    switch(choice)
+            // Operate
+                case 4:
+                    choice = std::string::npos;
+                    while(choice)
                     {
-                    // Union
-                        case 1:
-                            handleUnion();
-                            choice = 0;
-                            break;
-                    // Intersect
-                        case 2:
-                            handleIntersect();
-                            choice = 0;
-                            break;
-                    // Difference
-                        case 3:
-                            handleDifference();
-                            choice = 0;
-                            break;
-                        default:
+                        displayMenu(operateMenuOptions_);
+                        if(handleRead(std::cin, choice))
+                        {
+                            switch(choice)
+                            {
+                            // Union
+                                case 1:
+                                    handleUnion();
+                                break;
+                            // Intersect
+                                case 2:
+                                    handleIntersect();
+                                break;
+                            // Difference
+                                case 3:
+                                    handleDifference();
+                                break;
+                                default:
+                                    std::cout << "Entered unknown menu index!\n ";
+                                break;
+                            }
+                        }
+                        else
+                        {
                             std::cout << "Entered wrong value!\n ";
-                            break;
+                        }
                     }
-                }
-                choice = mainMenuOptions_.size();
+                    choice = mainMenuOptions_.size();
                 break;
-        // Save
-            case 5:
-                handleSaveToDb();
+            // Save
+                case 5:
+                    handleSaveToDb();
                 break;
-        // Load
-            case 6:
-                handleLoadFromDb();
+            // Load
+                case 6:
+                    handleLoadFromDb();
                 break;
-        // Bash-mode
-            case 7:
-                runCommandMode();
+            // Bash-mode
+                case 7:
+                    runCommandMode();
                 break;
-            default:
-                std::cout << "Entered wrong value!\n ";
+                default:
+                    std::cout << "Entered unknown menu index!\n ";
                 break;
+            }
+        }
+        else
+        {
+            std::cout << "Entered wrong value!\n ";
         }
     }
 }
