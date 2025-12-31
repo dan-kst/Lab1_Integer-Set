@@ -55,9 +55,9 @@ public:
 // CRUD operations
     void handleUpdate();
 // Write into string stream
-    void handleRead(std::istream& input, std::istringstream& inputString);
+    bool handleRead(std::istream& input, std::istringstream& inputString);
 // Write into an integer
-    void handleRead(std::istream& input, size_t& inputValue);
+    bool handleRead(std::istream& input, size_t& inputValue);
     void handleCreate();
 // Operations with database
     void handleSaveToDb();

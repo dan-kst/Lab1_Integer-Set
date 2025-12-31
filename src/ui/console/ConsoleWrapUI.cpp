@@ -187,31 +187,38 @@ void ConsoleWrapUI::handleUpdate()
     }
 }
 // Write into string stream
-void ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputString)
+bool ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputString)
 {
     std::string inputStr;
     std::getline(input >> std::noskipws, inputStr);
     inputString.str(inputStr);
+    return !inputStr.empty() || inputStr == "\n";
 }
 // Write into an integer
-void ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
+bool ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
 {
+    size_t inputValueCopy = inputValue;
+    bool readIntSuccess = true;
     input >> inputValue;
     if(input.fail())
     {
         input.clear();
         std::cout << "Error! Integer value required.\n";
-        inputValue = std::string::npos;
+        readIntSuccess = false;
+        inputValue = inputValueCopy;
     }
     input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+    return readIntSuccess;
 }
 void ConsoleWrapUI::handleCreate()
 {
     std::cout << "Enter integers separated by spaces: ";
-    handleRead(std::cin, input_);
-    addSetElements(input_, *currentSet_);
-    setId_ = 0;
-    std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
+    if(handleRead(std::cin, input_))
+    {
+        addSetElements(input_, *currentSet_);
+        setId_ = 0;
+        std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
+    }
 }
 // Operations with database
 void ConsoleWrapUI::handleSaveToDb()
@@ -237,26 +244,20 @@ void ConsoleWrapUI::handleSaveToDb()
 }
 void ConsoleWrapUI::handleLoadFromDb()
 {
-    size_t id = std::string::npos;
     std::cout << "Enter the ID of the set to load: ";
-    handleRead(std::cin, id);
-    input_.str(std::to_string(id));
-    input_.seekg(0);
-    if(loadSet(id, *currentSet_))
+    if(handleRead(std::cin, setId_))
     {
-        setId_ = id;
+        loadSet(setId_, *currentSet_);
         std::cout << "\nSet with ID '" << setId_ << "' was loaded successfully!" << std::endl;
     }
 }
 // IntegerSet "UI" operations
 void ConsoleWrapUI::handleUnion()
 {
-    size_t id = 0;
     std::cout << "Enter the ID of the set to unite: ";
-    handleRead(std::cin, id);
-    if(id)
+    if(handleRead(std::cin, setId_))
     {
-        unionSets(id);
+        unionSets(setId_);
         std::cout << "Union operation was successful!\n\n";
     }
     else
@@ -266,12 +267,10 @@ void ConsoleWrapUI::handleUnion()
 }
 void ConsoleWrapUI::handleIntersect()
 {
-    size_t id = 0;
     std::cout << "Enter the ID of the set to intersect: ";
-    handleRead(std::cin, id);
-    if(id)
+    if(handleRead(std::cin, setId_))
     {
-        intersectSets(id);
+        intersectSets(setId_);
         std::cout << "Intersect operation was successful!\n\n";
     }
     else
@@ -281,12 +280,10 @@ void ConsoleWrapUI::handleIntersect()
 }
 void ConsoleWrapUI::handleDifference()
 {
-    size_t id = 0;
     std::cout << "Enter the ID of the set to difference: ";
-    handleRead(std::cin, id);
-    if(id)
+    if(handleRead(std::cin, setId_))
     {
-        differenceSets(id);
+        differenceSets(setId_);
         std::cout << "Difference operation was successful!\n\n";
     }
     else
