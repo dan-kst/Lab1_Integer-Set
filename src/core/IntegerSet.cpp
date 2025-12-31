@@ -108,13 +108,9 @@ std::vector<int> IntegerSet::toVector() const
     std::vector<int> elements(elements_.get(),elements_.get() + current_size_);
     return elements;
 }
-
-// For Console Wrap
-void IntegerSet::print() const
+void IntegerSet::clear()
 {
-    
-}
-void IntegerSet::input()
-{
-    
+    capacity_ = 10;
+    current_size_ = 0;
+    elements_ = std::make_unique<int[]>(capacity_);
 }

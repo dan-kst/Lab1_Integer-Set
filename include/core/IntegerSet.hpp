@@ -37,8 +37,6 @@ public:
 
 	// Helper functions
     std::vector<int> toVector() const;
-    // For Console Wrap
-    void print() const;
-    void input(); 
+    void clear();
 };
 #endif
