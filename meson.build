@@ -23,7 +23,8 @@ inc = include_directories('include')
 
 # 3. Sources
 ui_sources = files(
-    'src/ui/console/ConsoleWrapUI.cpp'
+    'src/ui/console/ConsoleWrapUI.cpp',
+    'src/ui/console/ConsoleWrapCore.cpp'
 )
 core_sources = files(
     'src/core/IntegerSet.cpp'

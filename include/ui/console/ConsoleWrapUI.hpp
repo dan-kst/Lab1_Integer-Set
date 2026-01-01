@@ -1,74 +1,72 @@
 #ifndef CONSOLE_WRAP_UI_HPP
 #define CONSOLE_WRAP_UI_HPP
+
 #include <memory>
 #include <array>
+#include <string>
 #include <sstream>
 #include <iostream>
 #include <limits>
 #include "./core/IntegerSet.hpp"
-#include "./storage/IntegerSetSerializer.hpp"
-#include "./storage/ISetRepository.hpp"
+#include "./ui/console/ConsoleWrapCore.hpp"
 
 class ConsoleWrapUI
 {
 private:
     constexpr static std::array<std::string, 8> mainMenuOptions_ =
     {
-        "Exit",     //0
-        "Create",   //1
-        "Show",     //2
-        "Edit",     //3
-        "Operate",  //4
-        "Save",     //5
-        "Load",     //6
-        "Bash-mode" //7
+        "Exit",                 //0
+        "Create",               //1
+        "Show",                 //2
+        "Edit",                 //3
+        "Operate Sets",         //4
+        "Save",                 //5
+        "Load",                 //6
+        "Bash-mode"             //7
     };
     constexpr static std::array<std::string, 4> operateMenuOptions_ =
     {
         "Back",         //0
-        "Unite",        //1
+        "Union",        //1
         "Intersect",    //2
-        "Different"     //3
+        "Difference"    //3
     };
-    std::istringstream input_;
-    size_t setId_;
-// wrap own functions
-    template<size_t N>
-    void displayMenu(const std::array<std::string, N>& options);
+    std::unique_ptr<ConsoleWrapCore> core_;
+    std::shared_ptr<IntegerSet> currentSet_;
+// wrap own methods
     void showSetElements();
-    void runCommandMode();
-// handleCreate "worker" function
-    void addSetElements(std::istringstream& input, IntegerSet& set);
-// handleLoadFromDb "worker" function
-    bool loadSet(int id, IntegerSet& set);
-// handleUpdate "worker" function
-    bool updateSet(std::istringstream& input);
-// IntegerSet "worker" operations
-    void unionSets(size_t setOtherId);
-    void intersectSets(size_t setOtherId);
-    void differenceSets(size_t setOtherId);
-
-protected:
-    std::shared_ptr<ISetRepository> repo_;
-    std::unique_ptr<IntegerSet> currentSet_;
+    template<size_t N>
+    void displayMenu(const std::array<std::string, N>& options)
+    {
+        size_t optionsSize = N;
+        std::string suffix(" set");
+        std::cout << std::endl;
+        for(size_t i = 1; i < optionsSize; i++)
+        {
+            std::cout << std::to_string(i) << ". "  << options[i] << suffix << std::endl;
+        }
+        std::cout << std::to_string(0) << ". "  << options[0] << std::endl;
+        std::cout << "Enter integer to choose: ";
+    }
 public:
 // Constructor
     ConsoleWrapUI(std::shared_ptr<ISetRepository> repo);
 // Launcher
-    void Launch();
+    void LaunchBasicMode();
+    void LaunchAdvancedMode();
 // CRUD operations
-    void handleUpdate();
-// Write into string stream
+    void handleCreate(std::istream& inputStream);
+    // Write into string stream
     bool handleRead(std::istream& input, std::istringstream& inputString);
-// Write into an integer
+    // Write into an integer
     bool handleRead(std::istream& input, size_t& inputValue);
-    void handleCreate();
+    void handleUpdate(std::istream& inputStream);
 // Operations with database
     void handleSaveToDb();
-    void handleLoadFromDb();
+    void handleLoadFromDb(std::istream& inputStream);
 // IntegerSet "UI" operations
-    void handleUnion();
-    void handleIntersect();
-    void handleDifference();
+    void handleUnion(std::istream& inputStream);
+    void handleIntersect(std::istream& inputStream);
+    void handleDifference(std::istream& inputStream);
 };
 #endif

@@ -5,5 +5,5 @@
 int main() {
     std::shared_ptr<ISetRepository> repo = std::make_shared<PostgresRepository>();
     ConsoleWrapUI menu(repo);
-    menu.Launch();
+    menu.LaunchBasicMode();
 }
