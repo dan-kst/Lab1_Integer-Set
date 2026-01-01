@@ -2,26 +2,30 @@
 
 // Constructor
 ConsoleWrapCore::ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set)
-: repo_(repo), currentSet_(set) {}
+: repo_(repo), currentSet_(set), setId_(0) {}
 
-// handleCreate "worker" function
-void ConsoleWrapCore::addSetElements(std::istringstream& input)
+size_t ConsoleWrapCore::getId() { return setId_; }
+void ConsoleWrapCore::clearSet()
 {
-    addSetElements(input, *currentSet_);
+    currentSet_->clear();
+    setId_ = 0;
 }
 // handleCreate "worker" function
-void ConsoleWrapCore::addSetElements(std::istringstream& input, IntegerSet& set)
+std::unique_ptr<IntegerSet> ConsoleWrapCore::createSet(std::istringstream& input)
 {
+    std::unique_ptr<IntegerSet> set = std::make_unique<IntegerSet>();
     int value;
     while (input >> value && (!input.fail()))
     {
-        set.add(value);
+        set->add(value);
     }
     if(input.fail() && !input.eof())
     {
+        set.reset();
         std::cout << "Error! Set requires an integer arguments.\n";
     }
     input.clear();
+    return set;
 }
 // handleUpdate "worker" function
 bool ConsoleWrapCore::updateSet()
@@ -56,6 +60,7 @@ bool ConsoleWrapCore::loadSet(size_t id, IntegerSet& set)
         if (loadedSet)
         {
             set = *loadedSet; // Rule of Three in action!
+            setId_ = id;
             return true;
         }
     }

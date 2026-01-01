@@ -20,9 +20,10 @@ public:
 // Constructor
     ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set);
 
+    size_t getId();
+    void clearSet();
 // handleCreate "worker" function
-    void addSetElements(std::istringstream& input);
-    void addSetElements(std::istringstream& input, IntegerSet& set);
+    std::unique_ptr<IntegerSet> createSet(std::istringstream& input);
 // handleUpdate "worker" function
     bool updateSet();
 // handleSaveToDb "worker" function
@@ -34,6 +35,5 @@ public:
     bool unionSets(size_t setOtherId);
     bool intersectSets(size_t setOtherId);
     bool differenceSets(size_t setOtherId);
-
 };
 #endif

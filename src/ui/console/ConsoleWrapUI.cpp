@@ -31,7 +31,17 @@ void ConsoleWrapUI::LaunchBasicMode()
                 break;
             // Edit
                 case 3:
-                    handleUpdate(std::cin);
+                    std::cout << core_->getId() << std::endl;
+                    if(core_->getId() != 0)
+                    {
+                        showSetElements();
+                        std::cout << "Enter integers separated by spaces or leave prompt empty to cancel: ";
+                        handleUpdate(std::cin);
+                    }
+                    else
+                    {
+                        std::cout << "Cannot update local set\n";
+                    }
                 break;
             // Operate
                 case 4:
@@ -119,7 +129,7 @@ void ConsoleWrapUI::LaunchAdvancedMode()
                     std::getline(commandInput >> std::ws, action, ' ');
                     if (action == "create")
                     {
-                        core_->addSetElements(commandInput);
+                        handleCreate(commandInput);
                     }
                     else if (action == "show")
                     {
@@ -127,7 +137,14 @@ void ConsoleWrapUI::LaunchAdvancedMode()
                     }
                     else if (action == "edit")
                     {
-                        handleUpdate(commandInput);
+                        if(!core_->getId())
+                        {
+                            handleUpdate(commandInput);
+                        }
+                        else
+                        {
+                            std::cout << "Cannot update local set\n";
+                        }
                     }
                     else if (action == "save")
                     {
@@ -180,11 +197,20 @@ void ConsoleWrapUI::showSetElements()
 // CRUD operations
 void ConsoleWrapUI::handleCreate(std::istream& inputStream)
 {
-    std::istringstream userInput;
-    if(handleRead(inputStream, userInput))
+    std::istringstream inputLine;
+    if(handleRead(inputStream, inputLine))
     {
-        core_->addSetElements(userInput, *currentSet_);
-        std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
+        std::unique_ptr<IntegerSet> set = core_->createSet(inputLine);
+        if(set)
+        {
+            core_->clearSet();
+            *currentSet_ = *set;
+            std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to create a set.\n";
+        }
     }
     else
     {
@@ -195,7 +221,7 @@ void ConsoleWrapUI::handleCreate(std::istream& inputStream)
 bool ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputString)
 {
     std::string inputStr;
-    std::getline(input >> std::noskipws, inputStr);
+    std::getline(input >> std::noskipws, inputStr, '\n');
     inputString.str(inputStr);
     return !inputStr.empty() && inputStr != "\n";
 }
@@ -217,10 +243,19 @@ bool ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
 }
 void ConsoleWrapUI::handleUpdate(std::istream& inputStream)
 {
-    std::istringstream userInput;
-    if(handleRead(inputStream, userInput))
+    std::istringstream inputLine;
+    if(handleRead(inputStream, inputLine))
     {
-        std::cout << "Set was updated successfully!\n" << std::endl;
+        std::unique_ptr<IntegerSet> set = core_->createSet(inputLine);
+        if(set)
+        {
+            *currentSet_ = *set;
+            std::cout << "Set was updated successfully!\n" << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to update a set.\n";
+        }
     }
     else
     {
