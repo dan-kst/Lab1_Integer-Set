@@ -5,6 +5,7 @@ ConsoleWrapCore::ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shar
 : repo_(repo), currentSet_(set), setId_(0) {}
 
 size_t ConsoleWrapCore::getId() { return setId_; }
+// showSetsList "worker" function
 std::vector<size_t> ConsoleWrapCore::getIdList()
 {
     std::vector<size_t> idList;

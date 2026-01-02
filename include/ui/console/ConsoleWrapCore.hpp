@@ -21,6 +21,7 @@ public:
     ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set);
 
     size_t getId();
+// showSetsList "worker" function
     std::vector<size_t> getIdList();
     void clearSet();
 // handleCreate "worker" function

@@ -1,5 +1,42 @@
 #include "./ui/console/ConsoleWrapUI.hpp"
 
+// wrap own methods
+void ConsoleWrapUI::showSetsList()
+{
+    try
+    {
+        std::vector<size_t> idList = core_->getIdList();
+        if(idList.size() > 0)
+        {
+            std::cout << "Id of available sets to load:" << std::endl;
+            for(auto id : idList)
+            {
+                std::cout << id << std::endl;
+            }
+        }
+        else
+        {
+            std::cout << "No available sets to load:" << std::endl;
+        }
+    }
+    catch(std::exception& ex)
+    {
+        std::cout << ex.what() << std::endl;
+    }
+}
+void ConsoleWrapUI::showSetElements()
+{
+    std::string elements = SetSerializer::to_json(*currentSet_).at(1).dump();
+
+    if (elements.empty())
+    {
+        std::cout << "Current Set is empty." << std::endl;
+    }
+    else
+    {
+        std::cout << "Current Set: " << elements << std::endl;
+    }
+}
 // Constructor
 ConsoleWrapUI::ConsoleWrapUI(std::shared_ptr<ISetRepository> repo)
 {
@@ -86,7 +123,8 @@ void ConsoleWrapUI::LaunchBasicMode()
                 break;
             // Load
                 case 6:
-                    std::cout << "Enter the ID of the set to load: ";
+                    showSetsList();
+                    std::cout << "\nEnter the ID of the set to load: ";
                     handleLoadFromDb(std::cin);
                 break;
             // Bash-mode
@@ -150,6 +188,10 @@ void ConsoleWrapUI::LaunchAdvancedMode()
                     {
                         handleSaveToDb();
                     }
+                    else if (action == "list")
+                    {
+                        showSetsList();
+                    }
                     else if (action == "load")
                     {
                         handleLoadFromDb(commandInput);
@@ -179,19 +221,6 @@ void ConsoleWrapUI::LaunchAdvancedMode()
     if(hasError)
     {
         *currentSet_ = *currentSetCopy;
-    }
-}
-void ConsoleWrapUI::showSetElements()
-{
-    std::string elements = SetSerializer::to_json(*currentSet_).at(1).dump();
-
-    if (elements.empty())
-    {
-        std::cout << "Current Set is empty." << std::endl;
-    }
-    else
-    {
-        std::cout << "Current Set: " << elements << std::endl;
     }
 }
 // CRUD operations

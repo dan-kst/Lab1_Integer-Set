@@ -33,8 +33,14 @@ private:
     };
     std::unique_ptr<ConsoleWrapCore> core_;
     std::shared_ptr<IntegerSet> currentSet_;
+public:
+// Constructor
+    ConsoleWrapUI(std::shared_ptr<ISetRepository> repo);
+private:
 // wrap own methods
+    void showSetsList();
     void showSetElements();
+// template function
     template<size_t N>
     void displayMenu(const std::array<std::string, N>& options)
     {
@@ -49,8 +55,6 @@ private:
         std::cout << "Enter integer to choose: ";
     }
 public:
-// Constructor
-    ConsoleWrapUI(std::shared_ptr<ISetRepository> repo);
 // Launcher
     void LaunchBasicMode();
     void LaunchAdvancedMode();
