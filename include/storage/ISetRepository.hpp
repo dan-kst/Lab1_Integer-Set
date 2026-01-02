@@ -10,5 +10,6 @@ public:
     virtual std::unique_ptr<IntegerSet> load(size_t id) = 0;
     virtual bool update(const IntegerSet& set, size_t id) = 0;
     virtual bool remove(size_t id) = 0;
+    virtual std::vector<size_t> getIdAll() = 0;
 };
 #endif

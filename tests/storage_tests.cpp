@@ -1,16 +1,7 @@
-#include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include "./storage/ISetRepository.hpp"
 #include "./storage/PostgresRepository.hpp"
-
-// Create the Mock class
-class MockSetRepository : public ISetRepository {
-public:
-    MOCK_METHOD(size_t, save, (const IntegerSet& set), (override));
-    MOCK_METHOD(std::unique_ptr<IntegerSet>, load, (size_t id), (override));
-    MOCK_METHOD(bool, update, (const IntegerSet& setUpdate, size_t id), (override));
-    MOCK_METHOD(bool, remove, (size_t id), (override));
-};
+#include "./mocks/MockSetRepository.hpp"
 
 TEST(StorageTest, AppCallsSaveMethod) {
     IntegerSet mySet = {1, 2, 3};

@@ -56,3 +56,14 @@ bool PostgresRepository::remove(size_t id) {
     txn.commit();
     return wasUpdated;
 }
+std::vector<size_t> PostgresRepository::getIdAll() {
+    pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};
+    pqxx::work txn{c};
+    pqxx::result res = txn.exec("SELECT id FROM sets ORDER BY id ASC");
+    
+    std::vector<size_t> ids;
+    for (auto row : res) {
+        ids.push_back(row[0].as<size_t>());
+    }
+    return ids;
+}

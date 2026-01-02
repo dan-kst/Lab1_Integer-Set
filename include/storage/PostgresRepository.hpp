@@ -11,6 +11,7 @@ public:
     std::unique_ptr<IntegerSet> load(size_t id) override;
     bool update(const IntegerSet& set, size_t id) override;
     bool remove(size_t id) override;
+    std::vector<size_t> getIdAll() override;
 };
 
 #endif
