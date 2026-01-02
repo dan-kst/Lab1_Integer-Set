@@ -65,5 +65,6 @@ std::vector<size_t> PostgresRepository::getIdAll() {
     for (auto row : res) {
         ids.push_back(row[0].as<size_t>());
     }
+    txn.commit();
     return ids;
 }
