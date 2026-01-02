@@ -5,6 +5,20 @@ ConsoleWrapCore::ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shar
 : repo_(repo), currentSet_(set), setId_(0) {}
 
 size_t ConsoleWrapCore::getId() { return setId_; }
+std::vector<size_t> ConsoleWrapCore::getIdList()
+{
+    std::vector<size_t> idList;
+    try
+    {
+        idList = repo_->getIdAll();
+    }
+    catch(std::exception& ex)
+    {
+        std::string error = "Couldn't load list due to internal error!\n";
+        throw std::runtime_error(error + ex.what());
+    }
+    return idList;
+}
 void ConsoleWrapCore::clearSet()
 {
     currentSet_->clear();
