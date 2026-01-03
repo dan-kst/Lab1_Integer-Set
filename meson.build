@@ -7,7 +7,7 @@ project('Lab1_IntegerSet', 'cpp',
 gtest_proj = subproject('gtest')
 gtest_dep = gtest_proj.get_variable('gtest_main_dep')
 gmock_dep = gtest_proj.get_variable('gmock_dep')
-gtkmm_dep = dependency('gtkmm-3.0')
+gtkmm_dep = dependency('gtkmm-4.0', version: '>= 4.6.0')
 
 json_proj = subproject('nlohmann_json')
 json_dep = dependency('nlohmann_json', fallback : ['nlohmann_json', 'nlohmann_json_dep'])
@@ -56,7 +56,7 @@ lib_set_console = static_library('integer_set_console',
 lib_set_gtk = static_library('integer_set_gtk',
     [core_sources, storage_sources, gui_sources],
     include_directories : inc,
-    dependencies : [json_dep, pqxx_dep]
+    dependencies : [json_dep, pqxx_dep, gtkmm_dep]
 )
 
 # 5. Executables (The "Wraps")
