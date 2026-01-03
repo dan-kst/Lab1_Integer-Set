@@ -17,21 +17,21 @@ size_t PostgresRepository::save(const IntegerSet& set) {
     txn.commit();
     return r[0].as<int>();
 }
-std::unique_ptr<IntegerSet> PostgresRepository::load(size_t id)
-{
-    // 1. Connect to the DB (Use the credentials from your docker-compose)
+std::unique_ptr<IntegerSet> PostgresRepository::load(size_t id) {
     pqxx::connection c{"postgresql://user:password@localhost:5432/lab1_db"};
     pqxx::work txn{c};
-
-    // 2. Execute SQL
-    pqxx::row set =  txn.exec_params1("SELECT * FROM sets WHERE id=$1", id);
+    pqxx::result res = txn.exec_params("SELECT data FROM sets WHERE id=$1", id);
     txn.commit();
-
-    // 3. Parse data (convert field from string to vector<int>)
-    std::string rawJson = set[1].as<std::string>();
-    auto jsonDataObj = nlohmann::json::parse(rawJson);
-
-    return SetSerializer::from_json(jsonDataObj);
+    if (res.empty())
+    {
+        return nullptr;
+    }
+    else
+    {
+        std::string rawJson = res[0][0].as<std::string>();
+        auto jsonDataObj = nlohmann::json::parse(rawJson);
+        return SetSerializer::from_json(jsonDataObj);
+    }
 }
 bool PostgresRepository::update(const IntegerSet& setUpdated, size_t id)
 {
