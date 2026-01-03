@@ -14,13 +14,19 @@ TEST(StorageTest, AppCallsSaveMethod) {
     mockRepo.save(mySet); 
 }
 TEST(StorageTest, PostgresRealSaveLoad) {
-    // This test requires Docker to be running!
+    // This is an Integration Test - it needs Docker running
     PostgresRepository repo;
     IntegerSet original = {42, 100, 7};
     
-    repo.save(original);
-    auto loaded = repo.load(1);
+    // Save the set and capture the REAL ID assigned by Postgres
+    size_t assignedId = repo.save(original); 
+    
+    // Use that ID to load it back
+    auto loaded = repo.load(assignedId);
     
     EXPECT_EQ(loaded->size(), 3);
     EXPECT_TRUE(loaded->contains(42));
+    
+    // Clean up after the test so the DB doesn't get cluttered
+    repo.remove(assignedId);
 }
