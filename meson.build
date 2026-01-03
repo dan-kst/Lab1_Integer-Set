@@ -30,28 +30,29 @@ storage_sources = files(
     'src/storage/IntegerSetSerializer.cpp',
     'src/storage/PostgresRepository.cpp'
 )
+ui_sources_common = files(
+    'src/ui/common/WrapCore.cpp'
+)
 ui_sources_console = files(
     'src/ui/console/main.cpp',
-    'src/ui/console/ConsoleWrapUI.cpp',
-    'src/ui/console/ConsoleWrapCore.cpp'
+    'src/ui/console/ConsoleWrap.cpp'
 )
 # Create a new source list for the GUI
 ui_sources_gtk = files(
     'src/ui/gtkmm/main.cpp',
-    'src/ui/console/ConsoleWrapCore.cpp',
     'src/ui/gtkmm/SetWindow.cpp'
 )
 test_sources = files(
     'tests/test_main.cpp',
     'tests/set_tests.cpp',
     'tests/storage_tests.cpp',
-    'tests/core_wrap_tests.cpp',
+    'tests/wrap_core_tests.cpp',
     'tests/ui_input_tests.cpp'
 )
 
 # 4. Library (The "Engine" of your lab)
 lib_set = static_library('integer_set',
-    [core_sources, storage_sources, ui_sources_console, ui_sources_gtk],
+    [core_sources, storage_sources, ui_sources_common, ui_sources_console, ui_sources_gtk],
     include_directories : inc,
     dependencies : [json_dep, pqxx_dep, gtkmm_dep]
 )

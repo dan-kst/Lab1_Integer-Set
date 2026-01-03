@@ -1,12 +1,12 @@
-#include "./ui/console/ConsoleWrapCore.hpp"
+#include "./ui/common/WrapCore.hpp"
 
 // Constructor
-ConsoleWrapCore::ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set)
+WrapCore::WrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set)
 : repo_(repo), currentSet_(set), setId_(0) {}
 
-size_t ConsoleWrapCore::getId() { return setId_; }
+size_t WrapCore::getId() { return setId_; }
 // showSetsList "worker" function
-std::vector<size_t> ConsoleWrapCore::getIdList()
+std::vector<size_t> WrapCore::getIdList()
 {
     std::vector<size_t> idList;
     try
@@ -20,13 +20,13 @@ std::vector<size_t> ConsoleWrapCore::getIdList()
     }
     return idList;
 }
-void ConsoleWrapCore::clearSet()
+void WrapCore::clearSet()
 {
     currentSet_->clear();
     setId_ = 0;
 }
 // handleCreate "worker" function
-std::unique_ptr<IntegerSet> ConsoleWrapCore::createSet(std::istringstream& input)
+std::unique_ptr<IntegerSet> WrapCore::createSet(std::istringstream& input)
 {
     std::unique_ptr<IntegerSet> set = std::make_unique<IntegerSet>();
     int value;
@@ -43,7 +43,7 @@ std::unique_ptr<IntegerSet> ConsoleWrapCore::createSet(std::istringstream& input
     return set;
 }
 // handleUpdate "worker" function
-bool ConsoleWrapCore::updateSet()
+bool WrapCore::updateSet()
 {
     if(setId_)
     {
@@ -52,7 +52,7 @@ bool ConsoleWrapCore::updateSet()
     }
     return false;
 }
-bool ConsoleWrapCore::removeSet(size_t id)
+bool WrapCore::removeSet(size_t id)
 {
     bool isRemoved = false;
     try
@@ -74,7 +74,7 @@ bool ConsoleWrapCore::removeSet(size_t id)
     return isRemoved;
 }
 // handleSaveToDb "worker" function
-size_t ConsoleWrapCore::saveSet()
+size_t WrapCore::saveSet()
 {
     if(!setId_)
     {
@@ -84,11 +84,11 @@ size_t ConsoleWrapCore::saveSet()
     return 0;
 }
 // handleLoadFromDb "worker" functions
-bool ConsoleWrapCore::loadSet(size_t id)
+bool WrapCore::loadSet(size_t id)
 {
     return loadSet(id, *currentSet_);
 }
-bool ConsoleWrapCore::loadSet(size_t id, IntegerSet& set)
+bool WrapCore::loadSet(size_t id, IntegerSet& set)
 {
     try
     {
@@ -108,7 +108,7 @@ bool ConsoleWrapCore::loadSet(size_t id, IntegerSet& set)
     return false;
 }
 // IntegerSet "worker" operations
-bool ConsoleWrapCore::unionSets(size_t setOtherId)
+bool WrapCore::unionSets(size_t setOtherId)
 {
     bool success = false;
     auto setOther = std::make_unique<IntegerSet>();
@@ -119,7 +119,7 @@ bool ConsoleWrapCore::unionSets(size_t setOtherId)
     }
     return success;
 }
-bool ConsoleWrapCore::intersectSets(size_t setOtherId)
+bool WrapCore::intersectSets(size_t setOtherId)
 {
     bool success = false;
     auto setOther = std::make_unique<IntegerSet>();
@@ -130,7 +130,7 @@ bool ConsoleWrapCore::intersectSets(size_t setOtherId)
     }
     return success;
 }
-bool ConsoleWrapCore::differenceSets(size_t setOtherId)
+bool WrapCore::differenceSets(size_t setOtherId)
 {
     bool success = false;
     auto setOther = std::make_unique<IntegerSet>();

@@ -1,23 +1,23 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
-#include "ui/console/ConsoleWrapCore.hpp"
+#include "ui/common/WrapCore.hpp"
 #include "mocks/MockSetRepository.hpp"
 
 using ::testing::Return;
 using ::testing::ByMove;
 
-class CoreWrapTest : public ::testing::Test {
+class WrapCoreTest : public ::testing::Test {
 protected:
     std::shared_ptr<MockSetRepository> mockRepo = std::make_shared<MockSetRepository>();
     std::shared_ptr<IntegerSet> currentSet = std::make_shared<IntegerSet>();
-    std::unique_ptr<ConsoleWrapCore> core;
+    std::unique_ptr<WrapCore> core;
 
     void SetUp() override {
-        core = std::make_unique<ConsoleWrapCore>(mockRepo, currentSet);
+        core = std::make_unique<WrapCore>(mockRepo, currentSet);
     }
 };
 
-TEST_F(CoreWrapTest, RemoveSetClearsLocalIdIfMatched) {
+TEST_F(WrapCoreTest, RemoveSetClearsLocalIdIfMatched) {
     // 1. Simulate loading a set with ID 5
     auto fakeSet = std::make_unique<IntegerSet>(std::initializer_list<int>{1, 2});
     EXPECT_CALL(*mockRepo, load(5)).WillOnce(Return(ByMove(std::move(fakeSet))));
@@ -33,7 +33,7 @@ TEST_F(CoreWrapTest, RemoveSetClearsLocalIdIfMatched) {
     EXPECT_TRUE(result);
     EXPECT_EQ(core->getId(), 0); // Core should have cleared the ID
 }
-TEST_F(CoreWrapTest, LoadSetSuccessfullyUpdatesId) {
+TEST_F(WrapCoreTest, LoadSetSuccessfullyUpdatesId) {
     auto fakeSet = std::make_unique<IntegerSet>(std::initializer_list<int>{1, 2, 3});
     
     // Test that core correctly handles a successful load
@@ -45,7 +45,7 @@ TEST_F(CoreWrapTest, LoadSetSuccessfullyUpdatesId) {
     EXPECT_EQ(core->getId(), 10);
     EXPECT_EQ(currentSet->size(), 3);
 }
-TEST_F(CoreWrapTest, LoadSetReturnsFalseIfNotFound) {
+TEST_F(WrapCoreTest, LoadSetReturnsFalseIfNotFound) {
     // Tell the mock to return a nullptr (simulating a missing ID)
     EXPECT_CALL(*mockRepo, load(999)).WillOnce(Return(ByMove(nullptr)));
 

@@ -1,7 +1,7 @@
-#include "./ui/console/ConsoleWrapUI.hpp"
+#include "./ui/console/ConsoleWrap.hpp"
 
 // wrap own methods
-void ConsoleWrapUI::showSetsList()
+void ConsoleWrap::showSetsList()
 {
     try
     {
@@ -24,7 +24,7 @@ void ConsoleWrapUI::showSetsList()
         std::cout << ex.what() << std::endl;
     }
 }
-void ConsoleWrapUI::showSetElements()
+void ConsoleWrap::showSetElements()
 {
     std::string elements = SetSerializer::to_json(*currentSet_).at(SetSerializer::valueName).dump();
 
@@ -38,13 +38,13 @@ void ConsoleWrapUI::showSetElements()
     }
 }
 // Constructor
-ConsoleWrapUI::ConsoleWrapUI(std::shared_ptr<ISetRepository> repo)
+ConsoleWrap::ConsoleWrap(std::shared_ptr<ISetRepository> repo)
 {
     currentSet_ = std::make_shared<IntegerSet>();
-    core_ = std::make_unique<ConsoleWrapCore>(repo, currentSet_);
+    core_ = std::make_unique<WrapCore>(repo, currentSet_);
 }
 // Launcher
-void ConsoleWrapUI::LaunchBasicMode()
+void ConsoleWrap::LaunchBasicMode()
 {
     size_t choice = mainMenuOptions_.size();
     while(choice)
@@ -150,7 +150,7 @@ void ConsoleWrapUI::LaunchBasicMode()
     }
 }
 // Bash-like mode
-void ConsoleWrapUI::LaunchAdvancedMode()
+void ConsoleWrap::LaunchAdvancedMode()
 {
     std::string input;
     std::cout << "Entering Command Mode (type 'exit' to return to menu)\n";
@@ -231,7 +231,7 @@ void ConsoleWrapUI::LaunchAdvancedMode()
     }
 }
 // CRUD operations
-void ConsoleWrapUI::handleCreate(std::istream& inputStream)
+void ConsoleWrap::handleCreate(std::istream& inputStream)
 {
     std::istringstream inputLine;
     if(handleRead(inputStream, inputLine))
@@ -254,7 +254,7 @@ void ConsoleWrapUI::handleCreate(std::istream& inputStream)
     }
 }
 // Write into string stream
-bool ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputString)
+bool ConsoleWrap::handleRead(std::istream& input, std::istringstream& inputString)
 {
     std::string inputStr;
     std::getline(input >> std::noskipws, inputStr, '\n');
@@ -262,7 +262,7 @@ bool ConsoleWrapUI::handleRead(std::istream& input, std::istringstream& inputStr
     return !inputStr.empty() && inputStr != "\n";
 }
 // Write into an integer
-bool ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
+bool ConsoleWrap::handleRead(std::istream& input, size_t& inputValue)
 {
     size_t inputValueCopy = inputValue;
     bool readIntSuccess = true;
@@ -277,7 +277,7 @@ bool ConsoleWrapUI::handleRead(std::istream& input, size_t& inputValue)
     input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return readIntSuccess;
 }
-void ConsoleWrapUI::handleUpdate(std::istream& inputStream)
+void ConsoleWrap::handleUpdate(std::istream& inputStream)
 {
     std::istringstream inputLine;
     if(handleRead(inputStream, inputLine))
@@ -298,7 +298,7 @@ void ConsoleWrapUI::handleUpdate(std::istream& inputStream)
         std::cout << "Editing have been cancelled.\n";
     }
 }
-void ConsoleWrapUI::handleDelete(std::istream& inputStream)
+void ConsoleWrap::handleDelete(std::istream& inputStream)
 {
     size_t id;
     try
@@ -318,7 +318,7 @@ void ConsoleWrapUI::handleDelete(std::istream& inputStream)
     }
 }
 // Operations with database
-void ConsoleWrapUI::handleSaveToDb()
+void ConsoleWrap::handleSaveToDb()
 {
     try
     {
@@ -341,7 +341,7 @@ void ConsoleWrapUI::handleSaveToDb()
         std::cout << "Error! Cannot save/update set: " << e.what() << std::endl;
     }
 }
-void ConsoleWrapUI::handleLoadFromDb(std::istream& inputStream)
+void ConsoleWrap::handleLoadFromDb(std::istream& inputStream)
 {
     size_t id;
     try
@@ -361,7 +361,7 @@ void ConsoleWrapUI::handleLoadFromDb(std::istream& inputStream)
     }
 }
 // IntegerSet "UI" operations
-void ConsoleWrapUI::handleUnion(std::istream& inputStream)
+void ConsoleWrap::handleUnion(std::istream& inputStream)
 {
     size_t id;
     if(handleRead(inputStream, id) && core_->unionSets(id))
@@ -373,7 +373,7 @@ void ConsoleWrapUI::handleUnion(std::istream& inputStream)
         std::cout << "Failed to union sets.\n";
     }
 }
-void ConsoleWrapUI::handleIntersect(std::istream& inputStream)
+void ConsoleWrap::handleIntersect(std::istream& inputStream)
 {
     size_t id;
     if(handleRead(inputStream, id) && core_->intersectSets(id))
@@ -385,7 +385,7 @@ void ConsoleWrapUI::handleIntersect(std::istream& inputStream)
         std::cout << "Failed to intersect sets.\n";
     }
 }
-void ConsoleWrapUI::handleDifference(std::istream& inputStream)
+void ConsoleWrap::handleDifference(std::istream& inputStream)
 {
     size_t id;
     if(handleRead(inputStream, id) && core_->differenceSets(id))

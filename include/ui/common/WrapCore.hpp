@@ -10,7 +10,7 @@
 #include "./storage/ISetRepository.hpp"
 #include "./storage/IntegerSetSerializer.hpp"
 
-class ConsoleWrapCore
+class WrapCore
 {
 private:
     std::shared_ptr<ISetRepository> repo_;
@@ -18,7 +18,7 @@ private:
     size_t setId_;
 public:
 // Constructor
-    ConsoleWrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set);
+    WrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set);
 
     size_t getId();
 // showSetsList "worker" function

@@ -8,9 +8,9 @@
 #include <iostream>
 #include <limits>
 #include "./core/IntegerSet.hpp"
-#include "./ui/console/ConsoleWrapCore.hpp"
+#include "./ui/common/WrapCore.hpp"
 
-class ConsoleWrapUI
+class ConsoleWrap
 {
 private:
     constexpr static std::array<std::string, 9> mainMenuOptions_ =
@@ -32,11 +32,11 @@ private:
         "Intersect",    //2
         "Difference"    //3
     };
-    std::unique_ptr<ConsoleWrapCore> core_;
+    std::unique_ptr<WrapCore> core_;
     std::shared_ptr<IntegerSet> currentSet_;
 public:
 // Constructor
-    ConsoleWrapUI(std::shared_ptr<ISetRepository> repo);
+    ConsoleWrap(std::shared_ptr<ISetRepository> repo);
 private:
 // wrap own methods
     void showSetsList();

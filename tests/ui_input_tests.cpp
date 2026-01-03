@@ -1,10 +1,10 @@
 #include <gtest/gtest.h>
-#include "ui/console/ConsoleWrapUI.hpp"
+#include "ui/console/ConsoleWrap.hpp"
 #include "mocks/MockSetRepository.hpp"
 
 TEST(UIInputTest, HandleReadCapturesValidInteger) {
     auto mockRepo = std::make_shared<MockSetRepository>();
-    ConsoleWrapUI ui(mockRepo);
+    ConsoleWrap ui(mockRepo);
     
     std::stringstream inputData("42\n");
     size_t outValue = 0;
@@ -17,7 +17,7 @@ TEST(UIInputTest, HandleReadCapturesValidInteger) {
 
 TEST(UIInputTest, HandleReadFailsOnNonNumeric) {
     auto mockRepo = std::make_shared<MockSetRepository>();
-    ConsoleWrapUI ui(mockRepo);
+    ConsoleWrap ui(mockRepo);
     
     std::stringstream inputData("not_a_number\n");
     size_t outValue = 100;

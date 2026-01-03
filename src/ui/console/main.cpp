@@ -1,9 +1,9 @@
 #include "./storage/ISetRepository.hpp"
 #include "./storage/PostgresRepository.hpp"
-#include "./ui/console/ConsoleWrapUI.hpp"
+#include "./ui/console/ConsoleWrap.hpp"
 
 int main() {
     std::shared_ptr<ISetRepository> repo = std::make_shared<PostgresRepository>();
-    ConsoleWrapUI menu(repo);
+    ConsoleWrap menu(repo);
     menu.LaunchBasicMode();
 }
