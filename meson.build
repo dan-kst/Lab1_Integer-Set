@@ -36,7 +36,8 @@ storage_sources = files(
 test_sources = files(
     'tests/test_main.cpp',
     'tests/set_tests.cpp',
-    'tests/storage_tests.cpp'
+    'tests/storage_tests.cpp',
+    'tests/core_wrap_tests.cpp'
 )
 
 # 4. Library (The "Engine" of your lab)
