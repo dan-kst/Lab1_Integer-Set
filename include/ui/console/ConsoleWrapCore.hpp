@@ -28,6 +28,8 @@ public:
     std::unique_ptr<IntegerSet> createSet(std::istringstream& input);
 // handleUpdate "worker" function
     bool updateSet();
+// handleDelete "worker" function
+    bool removeSet(size_t id);
 // handleSaveToDb "worker" function
     size_t saveSet();
 // handleLoadFromDb "worker" functions

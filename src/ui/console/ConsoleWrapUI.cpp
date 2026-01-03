@@ -127,8 +127,15 @@ void ConsoleWrapUI::LaunchBasicMode()
                     std::cout << "\nEnter the ID of the set to load: ";
                     handleLoadFromDb(std::cin);
                 break;
-            // Bash-mode
+            // Remove
                 case 7:
+                    showSetsList();
+                    showSetElements();
+                    std::cout << "\nEnter the ID of the set to remove: ";
+                    handleDelete(std::cin);
+                break;
+            // Bash-mode
+                case 8:
                     LaunchAdvancedMode();
                 break;
                 default:
@@ -291,6 +298,25 @@ void ConsoleWrapUI::handleUpdate(std::istream& inputStream)
         std::cout << "Editing have been cancelled.\n";
     }
 }
+void ConsoleWrapUI::handleDelete(std::istream& inputStream)
+{
+    size_t id;
+    try
+    {
+        if(handleRead(inputStream, id) && core_->removeSet(id))
+        {
+            std::cout << "Set with ID '" << id << "' was removed successfully!" << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to remove the set!\n" << std::endl;
+        }
+    }
+    catch(std::exception& e)
+    {
+        std::cout << "Error! Cannot remove set!\n" << e.what() << std::endl;
+    }
+}
 // Operations with database
 void ConsoleWrapUI::handleSaveToDb()
 {
@@ -312,7 +338,7 @@ void ConsoleWrapUI::handleSaveToDb()
     }
     catch(std::exception& e)
     {
-        std::cout << "Error! Cannot save/update entry: " << e.what() << std::endl;
+        std::cout << "Error! Cannot save/update set: " << e.what() << std::endl;
     }
 }
 void ConsoleWrapUI::handleLoadFromDb(std::istream& inputStream)
@@ -329,9 +355,9 @@ void ConsoleWrapUI::handleLoadFromDb(std::istream& inputStream)
             std::cout << "Failed to load the set!\n" << std::endl;
         }
     }
-    catch(std::exception& e)
+    catch(std::exception& ex)
     {
-        std::cout << "Error! Cannot load entry: " << e.what() << std::endl;
+        std::cout <<  ex.what() << std::endl;
     }
 }
 // IntegerSet "UI" operations

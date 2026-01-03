@@ -13,7 +13,7 @@
 class ConsoleWrapUI
 {
 private:
-    constexpr static std::array<std::string, 8> mainMenuOptions_ =
+    constexpr static std::array<std::string, 9> mainMenuOptions_ =
     {
         "Exit",                 //0
         "Create",               //1
@@ -22,7 +22,8 @@ private:
         "Operate Sets",         //4
         "Save",                 //5
         "Load",                 //6
-        "Bash-mode"             //7
+        "Remove",               //7
+        "Bash-mode"             //8
     };
     constexpr static std::array<std::string, 4> operateMenuOptions_ =
     {
@@ -65,6 +66,7 @@ public:
     // Write into an integer
     bool handleRead(std::istream& input, size_t& inputValue);
     void handleUpdate(std::istream& inputStream);
+    void handleDelete(std::istream& inputStream);
 // Operations with database
     void handleSaveToDb();
     void handleLoadFromDb(std::istream& inputStream);

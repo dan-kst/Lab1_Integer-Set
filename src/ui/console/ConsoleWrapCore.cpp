@@ -52,6 +52,27 @@ bool ConsoleWrapCore::updateSet()
     }
     return false;
 }
+bool ConsoleWrapCore::removeSet(size_t id)
+{
+    bool isRemoved = false;
+    try
+    {
+        if (repo_->remove(id))
+        {
+            if(id == setId_)
+            {
+                clearSet();
+            }
+            isRemoved = true;
+        }
+    }
+    catch(std::exception& ex)
+    {
+        std::string errorMassage = "Couldn't remove a set with this Id.\n";
+        throw std::range_error(errorMassage + ex.what());
+    }
+    return isRemoved;
+}
 // handleSaveToDb "worker" function
 size_t ConsoleWrapCore::saveSet()
 {
@@ -79,9 +100,10 @@ bool ConsoleWrapCore::loadSet(size_t id, IntegerSet& set)
             return true;
         }
     }
-    catch(std::exception& e)
+    catch(std::exception& ex)
     {
-        throw std::range_error("Couldn't load the set with Id: " + id);
+        std::string errorMassage = "Couldn't load a set with this Id\n";
+        throw std::range_error(errorMassage + ex.what());
     }
     return false;
 }
