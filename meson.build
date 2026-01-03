@@ -7,6 +7,7 @@ project('Lab1_IntegerSet', 'cpp',
 gtest_proj = subproject('gtest')
 gtest_dep = gtest_proj.get_variable('gtest_main_dep')
 gmock_dep = gtest_proj.get_variable('gmock_dep')
+gtkmm_dep = dependency('gtkmm-3.0')
 
 json_proj = subproject('nlohmann_json')
 json_dep = dependency('nlohmann_json', fallback : ['nlohmann_json', 'nlohmann_json_dep'])
@@ -22,16 +23,21 @@ thread_dep = dependency('threads')
 inc = include_directories('include')
 
 # 3. Sources
-ui_sources = files(
-    'src/ui/console/ConsoleWrapUI.cpp',
-    'src/ui/console/ConsoleWrapCore.cpp'
-)
 core_sources = files(
     'src/core/IntegerSet.cpp'
 )
 storage_sources = files(
     'src/storage/IntegerSetSerializer.cpp',
     'src/storage/PostgresRepository.cpp'
+)
+ui_console_sources = files(
+    'src/ui/console/ConsoleWrapUI.cpp',
+    'src/ui/console/ConsoleWrapCore.cpp'
+)
+# Create a new source list for the GUI
+gui_sources = files(
+    'src/ui/gtkmm/main.cpp',
+    'src/ui/gtkmm/SetWindow.cpp'
 )
 test_sources = files(
     'tests/test_main.cpp',
@@ -42,23 +48,35 @@ test_sources = files(
 )
 
 # 4. Library (The "Engine" of your lab)
-lib_set = static_library('integer_set',
-    [core_sources, storage_sources, ui_sources],
+lib_set_console = static_library('integer_set_console',
+    [core_sources, storage_sources, ui_console_sources],
+    include_directories : inc,
+    dependencies : [json_dep, pqxx_dep]
+)
+lib_set_gtk = static_library('integer_set_gtk',
+    [core_sources, storage_sources, gui_sources],
     include_directories : inc,
     dependencies : [json_dep, pqxx_dep]
 )
 
 # 5. Executables (The "Wraps")
+# Build the console executable
 executable('lab1_console',
     'src/ui/console/main.cpp',
-    link_with : lib_set,
+    link_with : lib_set_console,
     include_directories : inc
 )
-
+# Build the GUI executable
+executable('lab1_gtk',
+    gui_sources,
+    link_with : lib_set_gtk,
+    include_directories : inc,
+    dependencies : [json_dep, pqxx_dep, gtkmm_dep]
+)
 # 6. Tests (TDD focus)
 test_exe = executable('run_tests',
     test_sources,
-    link_with : lib_set,
+    link_with : [lib_set_console, lib_set_gtk],
     include_directories : inc,
     dependencies : [gtest_dep, gmock_dep, pqxx_dep]
 )
