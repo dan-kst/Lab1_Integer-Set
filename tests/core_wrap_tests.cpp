@@ -33,6 +33,18 @@ TEST_F(CoreWrapTest, RemoveSetClearsLocalIdIfMatched) {
     EXPECT_TRUE(result);
     EXPECT_EQ(core->getId(), 0); // Core should have cleared the ID
 }
+TEST_F(CoreWrapTest, LoadSetSuccessfullyUpdatesId) {
+    auto fakeSet = std::make_unique<IntegerSet>(std::initializer_list<int>{1, 2, 3});
+    
+    // Test that core correctly handles a successful load
+    EXPECT_CALL(*mockRepo, load(10)).WillOnce(Return(ByMove(std::move(fakeSet))));
+
+    bool success = core->loadSet(10);
+    
+    EXPECT_TRUE(success);
+    EXPECT_EQ(core->getId(), 10);
+    EXPECT_EQ(currentSet->size(), 3);
+}
 TEST_F(CoreWrapTest, LoadSetReturnsFalseIfNotFound) {
     // Tell the mock to return a nullptr (simulating a missing ID)
     EXPECT_CALL(*mockRepo, load(999)).WillOnce(Return(ByMove(nullptr)));
