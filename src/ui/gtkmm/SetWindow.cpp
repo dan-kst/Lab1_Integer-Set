@@ -3,7 +3,7 @@
 SetWindow::SetWindow(std::shared_ptr<WrapCore> core) 
     :   core_(core),
         m_mainBox(Gtk::Orientation::VERTICAL, 10),
-        m_lblStatus("Current Set: {}"),
+        m_lblStatus(lblStatusString),
         m_entryInput(),
         m_buttonBox(Gtk::Orientation::HORIZONTAL, 5),
 

@@ -6,6 +6,7 @@
 
 class SetWindow : public Gtk::Window {
 private:
+    constexpr static std::string lblStatusString = "Current Set: ";
     std::shared_ptr<WrapCore> core_;
 
     // Layout Widgets
