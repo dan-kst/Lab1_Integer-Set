@@ -43,7 +43,6 @@ ui_sources_gtk = files(
     'src/ui/gtkmm/SetWindow.cpp'
 )
 test_sources = files(
-    'tests/test_main.cpp',
     'tests/set_tests.cpp',
     'tests/storage_tests.cpp',
     'tests/wrap_core_tests.cpp',
