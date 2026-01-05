@@ -14,7 +14,11 @@ private:
     Gtk::Label m_lblStatus;
     Gtk::Entry m_entryInput;
     Gtk::Box m_buttonBox;
-    
+
+    // Module Widgets
+    Gtk::MessageDialog m_errorDialog;
+    Gtk::MessageDialog m_infoDialog;
+
     // Buttons
     Gtk::Button m_btnAdd;
     Gtk::Button m_btnSave;

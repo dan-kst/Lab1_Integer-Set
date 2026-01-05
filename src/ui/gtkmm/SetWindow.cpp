@@ -7,6 +7,21 @@ SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
         m_entryInput(),
         m_buttonBox(Gtk::Orientation::HORIZONTAL, 5),
 
+        m_errorDialog(  *this, 
+                        "Error",
+                        false, 
+                        Gtk::MessageType::ERROR,
+                        Gtk::ButtonsType::OK,
+                        true
+                    ),
+        m_infoDialog(   *this, 
+                        "Info",
+                        false, 
+                        Gtk::MessageType::INFO,
+                        Gtk::ButtonsType::OK,
+                        true
+                    ),
+
         m_btnAdd("Add"),
         m_btnSave("Save"),
         m_btnLoad("Load by ID")
@@ -25,6 +40,13 @@ SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     m_buttonBox.append(m_btnSave);
     m_buttonBox.append(m_btnLoad);
 
+    m_errorDialog.signal_response().connect([this](int response_id) {
+        m_errorDialog.hide();
+    });
+
+    m_infoDialog.signal_response().connect([this](int response_id) {
+        m_infoDialog.hide();
+    });
     m_btnAdd.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_add_clicked));
 }
 
