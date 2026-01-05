@@ -26,6 +26,7 @@ private:
 
     void on_add_clicked();
     void on_save_clicked();
+    void on_load_clicked();
 
 public:
     SetWindow(std::shared_ptr<WrapCore> core);

@@ -49,6 +49,7 @@ SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     });
     m_btnAdd.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_add_clicked));
     m_btnSave.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_save_clicked));
+    m_btnLoad.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_load_clicked));
 }
 
 void SetWindow::on_add_clicked()
@@ -75,6 +76,36 @@ void SetWindow::on_save_clicked()
     {
         m_errorDialog.set_message("Failed to save!");
         m_errorDialog.set_secondary_text(e.what());
+        m_errorDialog.show();
+    }
+}
+
+void SetWindow::on_load_clicked() {
+    std::string text = m_entryInput.get_text();
+    if (text.empty()) {
+        m_errorDialog.set_message("Input Error");
+        m_errorDialog.set_secondary_text("Please enter a valid Set ID in the text field.");
+        m_errorDialog.show();
+        return;
+    }
+
+    try {
+        // Convert string to size_t
+        size_t id = std::stoul(text);
+
+        if (core_->loadSet(id)) {
+            m_lblStatus.set_text(lblStatusString + core_->getSetString());
+            m_infoDialog.set_message("Load Success");
+            m_infoDialog.set_secondary_text("Set with ID " + std::to_string(id) + " loaded successfully.");
+            m_infoDialog.show();
+        } else {
+            m_errorDialog.set_message("Load Failed");
+            m_errorDialog.set_secondary_text("Could not find a set with ID: " + std::to_string(id));
+            m_errorDialog.show();
+        }
+    } catch (const std::exception& e) {
+        m_errorDialog.set_message("Invalid ID");
+        m_errorDialog.set_secondary_text("Please enter a numeric value. Error: " + std::string(e.what()));
         m_errorDialog.show();
     }
 }
