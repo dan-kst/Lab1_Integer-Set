@@ -91,7 +91,7 @@ bool WrapCore::removeSet(size_t id)
 // handleSaveToDb "worker" function
 size_t WrapCore::saveSet()
 {
-    if(!setId_)
+    if(!setId_ && currentSet_->size() > 0)
     {
         setId_ = repo_->save(*currentSet_);
         return setId_;
