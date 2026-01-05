@@ -1,5 +1,5 @@
-#ifndef CONSOLE_WRAP_CORE_HPP
-#define CONSOLE_WRAP_CORE_HPP
+#ifndef WRAP_CORE_HPP
+#define WRAP_CORE_HPP
 
 #include <memory>
 #include <array>

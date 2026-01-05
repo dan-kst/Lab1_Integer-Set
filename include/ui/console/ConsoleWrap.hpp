@@ -1,5 +1,5 @@
-#ifndef CONSOLE_WRAP_UI_HPP
-#define CONSOLE_WRAP_UI_HPP
+#ifndef CONSOLE_WRAP_HPP
+#define CONSOLE_WRAP_HPP
 
 #include <memory>
 #include <array>
