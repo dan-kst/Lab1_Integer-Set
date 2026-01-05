@@ -264,17 +264,20 @@ bool ConsoleWrap::handleRead(std::istream& input, std::istringstream& inputStrin
 // Write into an integer
 bool ConsoleWrap::handleRead(std::istream& input, size_t& inputValue)
 {
-    size_t inputValueCopy = inputValue;
-    bool readIntSuccess = true;
-    input >> inputValue;
-    if(input.fail())
+    std::istringstream inputString;
+    bool readIntSuccess = handleRead(input, inputString);
+    if(readIntSuccess)
     {
-        input.clear();
-        std::cout << "Error! Integer value required.\n";
-        readIntSuccess = false;
-        inputValue = inputValueCopy;
+        size_t inputValueCopy = inputValue;
+        inputString >> inputValue;
+        readIntSuccess = !inputString.fail();
+        if(!readIntSuccess)
+        {
+            inputString.clear();
+            std::cout << "Error! Integer value required.\n";
+            inputValue = inputValueCopy;
+        }
     }
-    input.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
     return readIntSuccess;
 }
 void ConsoleWrap::handleUpdate(std::istream& inputStream)
