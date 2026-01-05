@@ -25,6 +25,7 @@ private:
     Gtk::Button m_btnLoad;
 
     void on_add_clicked();
+    void on_save_clicked();
 
 public:
     SetWindow(std::shared_ptr<WrapCore> core);
