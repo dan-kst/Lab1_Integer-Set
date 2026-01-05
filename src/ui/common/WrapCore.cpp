@@ -25,6 +25,17 @@ void WrapCore::clearSet()
     currentSet_->clear();
     setId_ = 0;
 }
+std::string WrapCore::getSetString()
+{
+    if(currentSet_->size() > 0)
+    {
+        return SetSerializer::to_json(*currentSet_).at(SetSerializer::valueName).dump();
+    }
+    else
+    {
+        return "";
+    }
+}
 // handleCreate "worker" function
 std::unique_ptr<IntegerSet> WrapCore::createSet(std::istringstream& input)
 {

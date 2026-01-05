@@ -26,7 +26,7 @@ void ConsoleWrap::showSetsList()
 }
 void ConsoleWrap::showSetElements()
 {
-    std::string elements = SetSerializer::to_json(*currentSet_).at(SetSerializer::valueName).dump();
+    std::string elements = core_->getSetString();
 
     if (elements.empty())
     {

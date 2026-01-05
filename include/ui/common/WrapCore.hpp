@@ -24,6 +24,7 @@ public:
 // showSetsList "worker" function
     std::vector<size_t> getIdList();
     void clearSet();
+    std::string getSetString();
 // handleCreate "worker" function
     std::unique_ptr<IntegerSet> createSet(std::istringstream& input);
 // handleUpdate "worker" function
