@@ -1,6 +1,6 @@
 #include "./ui/gtkmm/SetWindow.hpp"
 
-SetWindow::SetWindow(std::shared_ptr<WrapCore> core) 
+SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     :   core_(core),
         m_mainBox(Gtk::Orientation::VERTICAL, 10),
         m_lblStatus(lblStatusString),
@@ -24,4 +24,14 @@ SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     m_buttonBox.append(m_btnAdd);
     m_buttonBox.append(m_btnSave);
     m_buttonBox.append(m_btnLoad);
+
+    m_btnAdd.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_add_clicked));
+}
+
+void SetWindow::on_add_clicked()
+{
+    std::istringstream iss(m_entryInput.get_text());
+    core_->createSet(iss);
+    m_entryInput.set_text("");
+    m_lblStatus.set_text(lblStatusString + core_->getSetString());
 }
