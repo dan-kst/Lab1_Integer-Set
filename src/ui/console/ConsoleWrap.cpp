@@ -47,7 +47,7 @@ ConsoleWrap::ConsoleWrap(std::shared_ptr<ISetRepository> repo)
 void ConsoleWrap::LaunchBasicMode()
 {
     size_t choice = mainMenuOptions_.size();
-    while(choice)
+    while(choice && std::cin)
     {
         displayMenu(mainMenuOptions_);
         if(handleRead(std::cin, choice))
@@ -142,6 +142,10 @@ void ConsoleWrap::LaunchBasicMode()
                     std::cout << "Entered unknown menu index!\n ";
                 break;
             }
+        }
+        else if(std::cin.eof()) // Exit if stream is closed
+        {
+            break;
         }
         else
         {
