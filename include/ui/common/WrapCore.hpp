@@ -26,7 +26,7 @@ public:
     void clearSet();
     std::string getSetString();
 // handleCreate "worker" function
-    std::unique_ptr<IntegerSet> createSet(std::istringstream& input);
+    bool createSet(std::istringstream& input);
 // handleUpdate "worker" function
     bool updateSet();
 // handleDelete "worker" function

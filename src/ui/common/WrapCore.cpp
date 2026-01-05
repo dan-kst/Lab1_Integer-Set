@@ -37,7 +37,7 @@ std::string WrapCore::getSetString()
     }
 }
 // handleCreate "worker" function
-std::unique_ptr<IntegerSet> WrapCore::createSet(std::istringstream& input)
+bool WrapCore::createSet(std::istringstream& input)
 {
     std::unique_ptr<IntegerSet> set = std::make_unique<IntegerSet>();
     int value;
@@ -47,11 +47,15 @@ std::unique_ptr<IntegerSet> WrapCore::createSet(std::istringstream& input)
     }
     if(input.fail() && !input.eof())
     {
+        input.clear();
         set.reset();
-        std::cout << "Error! Set requires an integer arguments.\n";
+        return false;
     }
-    input.clear();
-    return set;
+    else
+    {
+        *currentSet_ = *set;
+        return true;
+    }
 }
 // handleUpdate "worker" function
 bool WrapCore::updateSet()

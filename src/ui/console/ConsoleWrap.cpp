@@ -236,11 +236,8 @@ void ConsoleWrap::handleCreate(std::istream& inputStream)
     std::istringstream inputLine;
     if(handleRead(inputStream, inputLine))
     {
-        std::unique_ptr<IntegerSet> set = core_->createSet(inputLine);
-        if(set)
+        if(core_->createSet(inputLine))
         {
-            core_->clearSet();
-            *currentSet_ = *set;
             std::cout << "Added elements. New size: " << currentSet_->size() << std::endl;
         }
         else
@@ -285,10 +282,8 @@ void ConsoleWrap::handleUpdate(std::istream& inputStream)
     std::istringstream inputLine;
     if(handleRead(inputStream, inputLine))
     {
-        std::unique_ptr<IntegerSet> set = core_->createSet(inputLine);
-        if(set)
+        if(core_->createSet(inputLine))
         {
-            *currentSet_ = *set;
             std::cout << "Set was updated successfully!\n" << std::endl;
         }
         else
