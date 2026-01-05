@@ -33,15 +33,12 @@ storage_sources = files(
 ui_sources_common = files(
     'src/ui/common/WrapCore.cpp'
 )
-ui_sources_console = files(
-    'src/ui/console/main.cpp',
-    'src/ui/console/ConsoleWrap.cpp'
-)
-# Create a new source list for the GUI
-ui_sources_gtk = files(
-    'src/ui/gtkmm/main.cpp',
-    'src/ui/gtkmm/SetWindow.cpp'
-)
+ui_logic_console = files('src/ui/console/ConsoleWrap.cpp')
+ui_main_console = files('src/ui/console/main.cpp')
+
+ui_logic_gtk = files('src/ui/gtkmm/SetWindow.cpp')
+ui_main_gtk = files('src/ui/gtkmm/main.cpp')
+
 test_sources = files(
     'tests/set_tests.cpp',
     'tests/storage_tests.cpp',
@@ -51,7 +48,7 @@ test_sources = files(
 
 # 4. Library (The "Engine" of your lab)
 lib_set = static_library('integer_set',
-    [core_sources, storage_sources, ui_sources_common, ui_sources_console, ui_sources_gtk],
+    [core_sources, storage_sources, ui_sources_common, ui_logic_console, ui_logic_gtk],
     include_directories : inc,
     dependencies : [json_dep, pqxx_dep, gtkmm_dep]
 )
@@ -59,13 +56,13 @@ lib_set = static_library('integer_set',
 # 5. Executables (The "Wraps")
 # Build the console executable
 executable('lab1_console',
-    ui_sources_console,
+    ui_main_console,
     link_with : lib_set,
     include_directories : inc
 )
 # Build the GUI executable
-executable('lab1_gtk',
-    ui_sources_gtk,
+executable('lab1_gtkmm',
+    ui_main_gtk,
     link_with : lib_set,
     include_directories : inc,
     dependencies : [gtkmm_dep]
