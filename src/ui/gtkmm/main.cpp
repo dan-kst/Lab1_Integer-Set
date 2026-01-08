@@ -1,7 +1,7 @@
 #include <gtkmm/application.h>
 #include "./storage/PostgresRepository.hpp"
 #include "./ui/common/WrapCore.hpp" // Use the renamed core
-#include "./ui/gtkmm/SetWindow.hpp"
+#include "./ui/gtkmm/SetMainWindow.hpp"
 
 int main(int argc, char* argv[]) {
     // 1. Initialize dependencies

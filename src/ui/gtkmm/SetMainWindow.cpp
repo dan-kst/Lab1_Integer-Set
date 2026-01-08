@@ -1,4 +1,4 @@
-#include "./ui/gtkmm/SetWindow.hpp"
+#include "./ui/gtkmm/SetMainWindow.hpp"
 
 SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     :   core_(core),

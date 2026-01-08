@@ -1,5 +1,5 @@
-#ifndef SET_WINDOW_HPP
-#define SET_WINDOW_HPP
+#ifndef SET_MAIN_WINDOW_HPP
+#define SET_MAIN_WINDOW_HPP
 
 #include <gtkmm.h>
 #include "./ui/common/WrapCore.hpp"
