@@ -13,5 +13,5 @@ int main(int argc, char* argv[]) {
     auto app = Gtk::Application::create("org.lab.integerset");
 
     // 3. Launch the Window
-    return app->make_window_and_run<SetWindow>(argc, argv, core);
+    return app->make_window_and_run<SetMainWindow>(argc, argv, core);
 }

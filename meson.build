@@ -36,7 +36,10 @@ ui_sources_common = files(
 ui_logic_console = files('src/ui/console/ConsoleWrap.cpp')
 ui_main_console = files('src/ui/console/main.cpp')
 
-ui_logic_gtk = files('src/ui/gtkmm/SetMainWindow.cpp')
+ui_logic_gtk = files(
+    'src/ui/gtkmm/SetMainWindow.cpp',
+    'src/ui/gtkmm/CreateSetDialog.cpp'
+)
 ui_main_gtk = files('src/ui/gtkmm/main.cpp')
 
 test_sources = files(
