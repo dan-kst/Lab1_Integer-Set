@@ -2,137 +2,76 @@
 
 SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     :   core_(core),
-        m_mainBox(Gtk::Orientation::VERTICAL, 10),
-        m_lblStatus(lblStatusString),
-        m_entryInput(),
-        m_buttonBox(Gtk::Orientation::HORIZONTAL, 5),
+        m_localOperationsBox(Gtk::Orientation::HORIZONTAL, 16),
+        m_dbOperationsBox(Gtk::Orientation::HORIZONTAL, 16),
+        m_setOperationsBox(Gtk::Orientation::HORIZONTAL, 8),
 
-        m_errorDialog(  *this, 
-                        "Error",
-                        false, 
-                        Gtk::MessageType::ERROR,
-                        Gtk::ButtonsType::OK,
-                        true
-                    ),
-        m_infoDialog(   *this, 
-                        "Info",
-                        false, 
-                        Gtk::MessageType::INFO,
-                        Gtk::ButtonsType::OK,
-                        true
-                    ),
+        m_createBtn("Create"),
+        m_removeBtn("Remove"),
+        m_editBtn("Edit"),
+        m_saveBtn("Save"),
+        m_loadBtn("Load"),
+        m_unionBtn("Union"),
+        m_interBtn("Intersect"),
+        m_diffBtn("Difference"),
 
-        m_btnAdd("Add"),
-        m_btnSave("Save"),
-        m_btnLoad("Load by ID")
+        m_resultLabel(s_resultLabelValue_),
+
+        m_errorDialog(*this, "Error", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true),
+        m_infoDialog(*this, "Info", false, Gtk::MessageType::INFO, Gtk::ButtonsType::OK, true)
 {
-    set_title("Integer Set Lab - Lab 1");
-    set_default_size(400, 200);
+    set_title("Integer Set Main Menu");
+    set_child(m_mainGrid);
 
-    set_child(m_mainBox);
-    m_mainBox.set_margin(15);
+    // Minimal sizing: make the window only as large as its children
+    set_resizable(false); 
+    m_mainGrid.set_margin(15);
+    m_mainGrid.set_row_spacing(10);
+    m_mainGrid.set_column_spacing(10);
 
-    m_mainBox.append(m_lblStatus);
-    m_mainBox.append(m_entryInput);
-    m_mainBox.append(m_buttonBox);
+    // Local operations layout setup
+    m_localOperationsBox.append(m_removeBtn);
+    m_localOperationsBox.append(m_editBtn);
 
-    m_buttonBox.append(m_btnAdd);
-    m_buttonBox.append(m_btnSave);
-    m_buttonBox.append(m_btnLoad);
+    // Database operations layout setup
+    m_dbOperationsBox.append(m_saveBtn);
+    m_dbOperationsBox.append(m_loadBtn);
 
-    m_errorDialog.signal_response().connect(
-        [this](int response_id) {
-            m_errorDialog.hide();
-        }
-    );
+    // Set operations layout setup
+    m_setOperationsBox.append(m_unionBtn);
+    m_setOperationsBox.append(m_interBtn);
+    m_setOperationsBox.append(m_diffBtn);
 
-    m_infoDialog.signal_response().connect(
-        [this](int response_id) {
-            m_infoDialog.hide();
-        }
-    );
     // Initialize the list model
-    m_StringList = Gtk::StringList::create({});
-    refreshIdList();
-    auto selection_model = Gtk::SingleSelection::create(m_StringList);
-    m_ColumnView.set_model(selection_model);
-    //  Create the ID Column
-    auto column = Gtk::ColumnViewColumn::create("Available Set IDs", createIdColumn());
-    m_ColumnView.append_column(column);
+    m_setValueStringList = Gtk::StringList::create({});
+    refreshLocalList();
+    auto selection_model = Gtk::SingleSelection::create(m_setValueStringList);
+    m_setListView.set_model(selection_model);
+    // Create the Value Column
+    auto column = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
+    m_setListView.append_column(column);
     // Add to layout
-    m_ScrolledWindow.set_child(m_ColumnView);
-    m_ScrolledWindow.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
-    m_ScrolledWindow.set_expand();
-    m_mainBox.append(m_ScrolledWindow);
+    m_setsWindow.set_child(m_setListView);
+    m_setsWindow.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+    m_setsWindow.set_expand();
 
-    m_btnAdd.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_add_clicked));
-    m_btnSave.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_save_clicked));
-    m_btnLoad.signal_clicked().connect(sigc::mem_fun(*this, &SetWindow::on_load_clicked));
+    // Row 0: CRUD operations
+    m_mainGrid.attach(m_createBtn, 0, 0, 1, 1);
+    m_mainGrid.attach(m_localOperationsBox, 1, 0, 1, 1);
+    m_mainGrid.attach(m_dbOperationsBox, 2, 0, 1, 1);
+
+    // Row 1: Local list of integer sets
+    m_mainGrid.attach(m_setsWindow, 0, 1, 4, 1);
+
+    // Row 2: Math operations
+    m_mainGrid.attach(m_setOperationsBox, 0, 2, 3, 1);
+    
+    // Row 3: Math operations result
+    m_mainGrid.attach(m_resultLabel, 0, 4, 4, 1);
 }
 
-
-// Signals
-void SetWindow::on_add_clicked()
-{
-    std::istringstream iss(m_entryInput.get_text());
-    core_->createSet(iss);
-    m_entryInput.set_text("");
-    m_lblStatus.set_text(lblStatusString + core_->getSetString());
-}
-
-void SetWindow::on_save_clicked() 
-{
-    try
-    {
-        size_t id = core_->saveSet();
-        if(id)
-        {
-            m_infoDialog.set_message("Save success!");
-            m_infoDialog.set_secondary_text("New set saved successfully with ID: " + std::to_string(id));
-            m_infoDialog.show();
-        }
-    }
-    catch (const std::exception& e)
-    {
-        m_errorDialog.set_message("Failed to save!");
-        m_errorDialog.set_secondary_text(e.what());
-        m_errorDialog.show();
-    }
-}
-
-void SetWindow::on_load_clicked()
-{
-    std::string text = m_entryInput.get_text();
-    if (text.empty()) {
-        m_errorDialog.set_message("Input Error");
-        m_errorDialog.set_secondary_text("Please enter a valid Set ID in the text field.");
-        m_errorDialog.show();
-        return;
-    }
-
-    try {
-        // Convert string to size_t
-        size_t id = std::stoul(text);
-
-        if (core_->loadSet(id)) {
-            m_lblStatus.set_text(lblStatusString + core_->getSetString());
-            m_infoDialog.set_message("Load Success");
-            m_infoDialog.set_secondary_text("Set with ID " + std::to_string(id) + " loaded successfully.");
-            m_infoDialog.show();
-        } else {
-            m_errorDialog.set_message("Load Failed");
-            m_errorDialog.set_secondary_text("Could not find a set with ID: " + std::to_string(id));
-            m_errorDialog.show();
-        }
-    } catch (const std::exception& e) {
-        m_errorDialog.set_message("Invalid ID");
-        m_errorDialog.set_secondary_text("Please enter a numeric value. Error: " + std::string(e.what()));
-        m_errorDialog.show();
-    }
-}
-
-// Factory helper functions
-Glib::RefPtr<Gtk::SignalListItemFactory> SetWindow::createIdColumn()
+// ColumnView helper functions
+Glib::RefPtr<Gtk::SignalListItemFactory> SetWindow::createValueColumn()
 {
     auto factory = Gtk::SignalListItemFactory::create();
     // Create a View
@@ -155,11 +94,9 @@ Glib::RefPtr<Gtk::SignalListItemFactory> SetWindow::createIdColumn()
     );
     return factory;
 }
-
-void SetWindow::refreshIdList() {
-    auto ids = core_->getIdList();
-    m_StringList->splice(0, m_StringList->get_n_items(), {});
-    for (auto id : ids) {
-        m_StringList->append(std::to_string(id));
+void SetWindow::refreshLocalList() {
+    m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
+    for (auto value : localSetValues_) {
+        m_setValueStringList->append(value);
     }
 }

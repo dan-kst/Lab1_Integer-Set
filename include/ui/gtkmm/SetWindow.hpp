@@ -6,35 +6,36 @@
 
 class SetWindow : public Gtk::Window {
 private:
-    constexpr static std::string lblStatusString = "Current Set: ";
+    std::vector<std::string> localSetValues_;
     std::shared_ptr<WrapCore> core_;
-
-    // Layout Widgets
-    Gtk::Box m_mainBox;
-    Gtk::Label m_lblStatus;
-    Gtk::Entry m_entryInput;
-    Gtk::Box m_buttonBox;
-    Gtk::ScrolledWindow m_ScrolledWindow;
-    Gtk::ColumnView m_ColumnView;
-    Glib::RefPtr<Gtk::StringList> m_StringList;
-
-    // Module Widgets
+// Widgets string values
+    constexpr static std::string s_resultLabelValue_ = "No Results";
+    constexpr static std::string s_valueColumnName_ = "Value";
+// Layout Widgets
+    Gtk::Grid m_mainGrid;
+    Gtk::ScrolledWindow m_setsWindow;
+    Gtk::Box m_localOperationsBox;
+    Gtk::Box m_dbOperationsBox;
+    Gtk::Box m_setOperationsBox;
+// Buttons
+    Gtk::Button m_createBtn;
+    Gtk::Button m_removeBtn;
+    Gtk::Button m_editBtn;
+    Gtk::Button m_saveBtn;
+    Gtk::Button m_loadBtn;
+    Gtk::Button m_unionBtn;
+    Gtk::Button m_interBtn;
+    Gtk::Button m_diffBtn;
+// Display widgets
+    Gtk::Label m_resultLabel;
+    Gtk::ColumnView m_setListView;
+    Glib::RefPtr<Gtk::StringList> m_setValueStringList;
+// Module Widgets
     Gtk::MessageDialog m_errorDialog;
     Gtk::MessageDialog m_infoDialog;
-
-    // Buttons
-    Gtk::Button m_btnAdd;
-    Gtk::Button m_btnSave;
-    Gtk::Button m_btnLoad;
-
-    // Signals
-    void on_add_clicked();
-    void on_save_clicked();
-    void on_load_clicked();
-
-    // Factory helper functions
-    Glib::RefPtr<Gtk::SignalListItemFactory> createIdColumn();
-    void refreshIdList();
+// ColumnView helper functions
+    Glib::RefPtr<Gtk::SignalListItemFactory> createValueColumn();
+    void refreshLocalList();
 
 public:
     SetWindow(std::shared_ptr<WrapCore> core);
