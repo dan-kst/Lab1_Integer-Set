@@ -1,6 +1,6 @@
 #include "./ui/gtkmm/SetMainWindow.hpp"
 
-SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
+SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     :   core_(core),
         m_localOperationsBox(Gtk::Orientation::HORIZONTAL, 16),
         m_dbOperationsBox(Gtk::Orientation::HORIZONTAL, 16),
@@ -68,10 +68,15 @@ SetWindow::SetWindow(std::shared_ptr<WrapCore> core)
     
     // Row 3: Math operations result
     m_mainGrid.attach(m_resultLabel, 0, 4, 4, 1);
+
+    // Configure buttons click signals
+    m_errorDialog.signal_response().connect([this](int) { m_errorDialog.hide(); });
+    m_infoDialog.signal_response().connect([this](int) { m_infoDialog.hide(); });
+    m_createBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_create_clicked));
 }
 
 // ColumnView helper functions
-Glib::RefPtr<Gtk::SignalListItemFactory> SetWindow::createValueColumn()
+Glib::RefPtr<Gtk::SignalListItemFactory> SetMainWindow::createValueColumn()
 {
     auto factory = Gtk::SignalListItemFactory::create();
     // Create a View
@@ -94,9 +99,42 @@ Glib::RefPtr<Gtk::SignalListItemFactory> SetWindow::createValueColumn()
     );
     return factory;
 }
-void SetWindow::refreshLocalList() {
+void SetMainWindow::refreshLocalList() {
     m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
     for (auto value : localSetValues_) {
         m_setValueStringList->append(value);
     }
+}
+
+
+// Signals
+void SetMainWindow::on_create_clicked()
+{
+    auto createDialog = Gtk::make_managed<CreateSetDialog>(*this);
+    
+    createDialog->signal_response().connect(
+        [this, createDialog](int response_id)
+        {
+            if (response_id == Gtk::ResponseType::OK)
+            {
+                std::istringstream iss(createDialog->get_data());
+                if(core_->createSet(iss))
+                {
+                    localSetValues_.push_back(core_->getSetString());
+                    refreshLocalList();
+                    m_infoDialog.set_message("Success!");
+                    m_infoDialog.set_secondary_text("Set was added to your list");
+                    m_infoDialog.show();
+                }
+                else
+                {
+                    m_errorDialog.set_message("Error!");
+                    m_errorDialog.set_secondary_text("Failed to create a set!");
+                    m_errorDialog.show();
+                }
+            }
+            createDialog->hide();
+        }
+    );
+    createDialog->show();
 }

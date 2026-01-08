@@ -2,9 +2,12 @@
 #define SET_MAIN_WINDOW_HPP
 
 #include <gtkmm.h>
+#include <sstream>
 #include "./ui/common/WrapCore.hpp"
+#include "./ui/gtkmm/CreateSetDialog.hpp"
 
-class SetWindow : public Gtk::Window {
+class SetMainWindow : public Gtk::Window
+{
 private:
     std::vector<std::string> localSetValues_;
     std::shared_ptr<WrapCore> core_;
@@ -36,9 +39,11 @@ private:
 // ColumnView helper functions
     Glib::RefPtr<Gtk::SignalListItemFactory> createValueColumn();
     void refreshLocalList();
+// Signals
+    void on_create_clicked();
 
 public:
-    SetWindow(std::shared_ptr<WrapCore> core);
+    SetMainWindow(std::shared_ptr<WrapCore> core);
 };
 
 #endif
