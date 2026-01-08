@@ -14,6 +14,9 @@ private:
     Gtk::Label m_lblStatus;
     Gtk::Entry m_entryInput;
     Gtk::Box m_buttonBox;
+    Gtk::ScrolledWindow m_ScrolledWindow;
+    Gtk::ColumnView m_ColumnView;
+    Glib::RefPtr<Gtk::StringList> m_StringList;
 
     // Module Widgets
     Gtk::MessageDialog m_errorDialog;
@@ -24,9 +27,14 @@ private:
     Gtk::Button m_btnSave;
     Gtk::Button m_btnLoad;
 
+    // Signals
     void on_add_clicked();
     void on_save_clicked();
     void on_load_clicked();
+
+    // Factory helper functions
+    Glib::RefPtr<Gtk::SignalListItemFactory> createIdColumn();
+    void refreshIdList();
 
 public:
     SetWindow(std::shared_ptr<WrapCore> core);
