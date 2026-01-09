@@ -27,18 +27,19 @@ void WrapCore::clearSet()
 }
 std::string WrapCore::getSetString()
 {
-    return getSetString(setId_);
-}
-std::string WrapCore::getSetString(size_t id)
-{
-    if(id == setId_ || (loadSet(id) && currentSet_->size() > 0))
+    if(currentSet_->size() > 0)
     {
         return SetSerializer::to_json(*currentSet_).at(SetSerializer::valueName).dump();
     }
-    else
-    {
-        return "";
+    return "";
+}
+std::string WrapCore::getSetString(size_t id)
+{
+    auto tempSet = repo_->load(id);
+    if (tempSet) {
+        return SetSerializer::to_json(*tempSet).at(SetSerializer::valueName).dump();
     }
+    return "{}";
 }
 // handleCreate "worker" function
 bool WrapCore::createSet(std::istringstream& input)
@@ -49,7 +50,7 @@ bool WrapCore::createSet(std::istringstream& input)
     {
         set->add(value);
     }
-    if(input.fail() && !input.eof())
+    if((input.fail() && !input.eof()) || set->size() == 0)
     {
         input.clear();
         set.reset();
