@@ -27,7 +27,11 @@ void WrapCore::clearSet()
 }
 std::string WrapCore::getSetString()
 {
-    if(currentSet_->size() > 0)
+    return getSetString(setId_);
+}
+std::string WrapCore::getSetString(size_t id)
+{
+    if(id == setId_ || (loadSet(id) && currentSet_->size() > 0))
     {
         return SetSerializer::to_json(*currentSet_).at(SetSerializer::valueName).dump();
     }
