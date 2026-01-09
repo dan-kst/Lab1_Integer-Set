@@ -38,7 +38,8 @@ ui_main_console = files('src/ui/console/main.cpp')
 
 ui_logic_gtk = files(
     'src/ui/gtkmm/SetMainWindow.cpp',
-    'src/ui/gtkmm/CreateSetDialog.cpp'
+    'src/ui/gtkmm/CreateSetDialog.cpp',
+    'src/ui/gtkmm/LoadSetDialog.cpp'
 )
 ui_main_gtk = files('src/ui/gtkmm/main.cpp')
 

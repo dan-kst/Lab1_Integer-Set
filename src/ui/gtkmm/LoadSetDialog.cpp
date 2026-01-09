@@ -1,0 +1,87 @@
+#include "ui/gtkmm/LoadSetDialog.hpp"
+
+LoadSetDialog::LoadSetDialog(Gtk::Window& parent, std::shared_ptr<WrapCore> core)
+    :   core_(core),
+        m_removeBtn("Delete")
+{
+    // ColumnView layout setup
+    setupColumns();
+    m_setsWindow.set_child(m_dbView);
+    m_setsWindow.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
+    m_setsWindow.set_expand();
+    // Grid layout setup
+    setupGrid();
+    // Main window setup
+    set_transient_for(parent);
+    set_title("Load Set");
+    set_modal(true);
+
+    get_content_area()->append(m_mainGrid);
+    add_button("Cancel", Gtk::ResponseType::CANCEL);
+    add_button("Confirm", Gtk::ResponseType::OK);
+    m_removeBtn.set_halign(Gtk::Align::START);
+}
+
+//  Helper functions
+void LoadSetDialog::setupColumns()
+{
+// --- ID Column ---
+    auto idColumn = Gtk::ColumnViewColumn::create(s_idColumnName_, createIdColumn());
+    m_dbView.append_column(idColumn);
+// --- Values Column ---
+    auto valueColumn = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
+    valueColumn->set_expand();
+    m_dbView.append_column(valueColumn);
+}
+void LoadSetDialog::setupGrid()
+{
+    m_mainGrid.set_margin(15);
+    m_mainGrid.set_row_spacing(10);
+    m_mainGrid.set_column_spacing(10);
+    m_mainGrid.attach(m_removeBtn, 0, 0, 1, 1);
+    m_mainGrid.attach(m_setsWindow, 0, 1, 3, 1);
+}
+
+// ColumnView factories
+Glib::RefPtr<Gtk::SignalListItemFactory> LoadSetDialog::createIdColumn()
+{
+    auto factory = Gtk::SignalListItemFactory::create();
+    factory->signal_setup().connect(
+        [](const Glib::RefPtr<Gtk::ListItem>& list_item)
+        {
+            list_item->set_child(*Gtk::make_managed<Gtk::Label>("", Gtk::Align::START));
+        }
+    );
+    factory->signal_bind().connect(
+        [](const Glib::RefPtr<Gtk::ListItem>& list_item)
+        {
+            auto item = std::dynamic_pointer_cast<Gtk::StringObject>(list_item->get_item());
+            auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
+            if (item && label) label->set_text(item->get_string());
+        }
+    );
+    return factory;
+}
+Glib::RefPtr<Gtk::SignalListItemFactory> LoadSetDialog::createValueColumn()
+{
+    auto factory = Gtk::SignalListItemFactory::create();
+    factory->signal_setup().connect(
+        [](const Glib::RefPtr<Gtk::ListItem>& list_item)
+        {
+            list_item->set_child(*Gtk::make_managed<Gtk::Label>("", Gtk::Align::START));
+        }
+    );
+    factory->signal_bind().connect(
+        [this](const Glib::RefPtr<Gtk::ListItem>& list_item)
+        {
+            auto item = std::dynamic_pointer_cast<Gtk::StringObject>(list_item->get_item());
+            auto label = dynamic_cast<Gtk::Label*>(list_item->get_child());
+            if (item && label)
+            {
+                size_t id = std::stoul(item->get_string());
+                label->set_text(core_->getSetString(id)); 
+            }
+        }
+    );
+    return factory;
+}
