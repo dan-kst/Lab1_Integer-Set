@@ -32,6 +32,11 @@ void LoadSetDialog::setupColumns()
     auto valueColumn = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
     valueColumn->set_expand();
     m_dbView.append_column(valueColumn);
+// --- Values StringList
+    m_setsIdList = Gtk::StringList::create({});
+    refreshDbList();
+    m_selection = Gtk::SingleSelection::create(m_setsIdList);
+    m_dbView.set_model(m_selection);
 }
 void LoadSetDialog::setupGrid()
 {
@@ -40,6 +45,15 @@ void LoadSetDialog::setupGrid()
     m_mainGrid.set_column_spacing(10);
     m_mainGrid.attach(m_removeBtn, 0, 0, 1, 1);
     m_mainGrid.attach(m_setsWindow, 0, 1, 3, 1);
+}
+void LoadSetDialog::refreshDbList()
+{
+    auto dbSetIds = core_->getIdList();
+    m_setsIdList->splice(0, m_setsIdList->get_n_items(), {});
+    for (auto id : dbSetIds)
+    {
+        m_setsIdList->append(std::to_string(id));
+    }
 }
 
 // ColumnView factories

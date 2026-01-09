@@ -18,13 +18,14 @@ private:
     Gtk::ScrolledWindow m_setsWindow;
 // Display
     Gtk::ColumnView m_dbView;
-    Glib::RefPtr<Gtk::StringList> m_setsList;
+    Glib::RefPtr<Gtk::StringList> m_setsIdList;
     Glib::RefPtr<Gtk::SingleSelection> m_selection;
 // Buttons
     Gtk::Button m_removeBtn;
 // Helper functions
     void setupColumns();
     void setupGrid();
+    void refreshDbList();
 // ColumnView factories
     Glib::RefPtr<Gtk::SignalListItemFactory> createIdColumn();
     Glib::RefPtr<Gtk::SignalListItemFactory> createValueColumn();
