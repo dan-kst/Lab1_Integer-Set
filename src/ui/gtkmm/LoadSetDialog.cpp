@@ -20,6 +20,8 @@ LoadSetDialog::LoadSetDialog(Gtk::Window& parent, std::shared_ptr<WrapCore> core
     add_button("Cancel", Gtk::ResponseType::CANCEL);
     add_button("Confirm", Gtk::ResponseType::OK);
     m_removeBtn.set_halign(Gtk::Align::START);
+    // Signals configurations
+    m_removeBtn.signal_clicked().connect(sigc::mem_fun(*this, &LoadSetDialog::on_remove_clicked));
 }
 std::string LoadSetDialog::getSelectedValue()
 {
@@ -113,4 +115,30 @@ Glib::RefPtr<Gtk::SignalListItemFactory> LoadSetDialog::createValueColumn()
         }
     );
     return factory;
+}
+// Signals
+void LoadSetDialog::on_remove_clicked()
+{
+    auto m_confirmDialog = Gtk::make_managed<Gtk::MessageDialog>(*this, "Confirm", false, Gtk::MessageType::WARNING, Gtk::ButtonsType::YES_NO, true);
+    m_confirmDialog->set_message("Confirm delete operation");
+    m_confirmDialog->set_secondary_text("Are you sure you want delete this item?");
+    m_confirmDialog->signal_response().connect(
+        [this, m_confirmDialog](int response_id)
+        {
+            if (response_id == Gtk::ResponseType::YES)
+            {
+                auto selectedItem = m_selection->get_selected_item();
+                if (!selectedItem) return;
+
+                auto stringObj = std::dynamic_pointer_cast<Gtk::StringObject>(selectedItem);
+                size_t id = std::stoul(stringObj->get_string());
+                if (core_->removeSet(id))
+                {
+                    refreshDbList(); 
+                }
+            }
+            m_confirmDialog->hide();
+        }
+    );
+    m_confirmDialog->show();
 }

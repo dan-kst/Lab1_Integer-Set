@@ -30,6 +30,8 @@ private:
 // ColumnView factories
     Glib::RefPtr<Gtk::SignalListItemFactory> createIdColumn();
     Glib::RefPtr<Gtk::SignalListItemFactory> createValueColumn();
+// Signals
+    void on_remove_clicked();
 };
 
 #endif
