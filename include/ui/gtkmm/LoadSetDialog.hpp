@@ -7,6 +7,7 @@
 class LoadSetDialog : public Gtk::Dialog {
 public:
     LoadSetDialog(Gtk::Window& parent, std::shared_ptr<WrapCore> core);
+    std::string getSelectedValue();
 
 private:
     std::shared_ptr<WrapCore> core_;

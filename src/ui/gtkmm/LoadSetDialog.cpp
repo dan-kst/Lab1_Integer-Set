@@ -21,6 +21,21 @@ LoadSetDialog::LoadSetDialog(Gtk::Window& parent, std::shared_ptr<WrapCore> core
     add_button("Confirm", Gtk::ResponseType::OK);
     m_removeBtn.set_halign(Gtk::Align::START);
 }
+std::string LoadSetDialog::getSelectedValue()
+{
+    std::string selectedSet;
+    auto selectedItem = m_selection->get_selected_item();
+    if (selectedItem)
+    {
+        auto stringObj = std::dynamic_pointer_cast<Gtk::StringObject>(selectedItem);
+        size_t id = std::stoul(stringObj->get_string());
+        if (core_->loadSet(id))
+        {
+            selectedSet = core_->getSetString();
+        }
+    }
+    return selectedSet;
+}
 
 //  Helper functions
 void LoadSetDialog::setupColumns()
