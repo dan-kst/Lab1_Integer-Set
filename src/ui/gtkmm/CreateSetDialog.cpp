@@ -2,15 +2,17 @@
 
 CreateSetDialog::CreateSetDialog(Gtk::Window& parent)
     :
-    m_contentBox(Gtk::Orientation::VERTICAL, 5),
+    m_contentBox(Gtk::Orientation::VERTICAL, 10),
     m_label("Enter integers separated by spaces:")
 {
     set_transient_for(parent);
     set_title("Create New Set");
     set_modal(true);
+    set_default_size(600, 200);
+    set_resizable(false);
 
     get_content_area()->append(m_contentBox);
-    m_contentBox.set_margin(10);
+    m_contentBox.set_margin(20);
     m_contentBox.append(m_label);
     m_contentBox.append(m_entry);
 
