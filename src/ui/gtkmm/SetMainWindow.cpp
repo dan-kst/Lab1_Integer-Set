@@ -122,7 +122,7 @@ void SetMainWindow::on_create_clicked()
         {
             if (response_id == Gtk::ResponseType::OK)
             {
-                std::istringstream iss(createDialog->get_data());
+                std::istringstream iss(createDialog->getInputValue());
                 if(core_->createSet(iss))
                 {
                     localSetValues_.push_back(core_->getSetString());

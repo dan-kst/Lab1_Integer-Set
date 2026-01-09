@@ -7,7 +7,7 @@ class CreateSetDialog : public Gtk::Dialog
 {
 public:
     CreateSetDialog(Gtk::Window& parent);
-    std::string get_data() const { return m_entry.get_text(); }
+    std::string getInputValue() const { return m_entry.get_text(); }
 
 private:
     Gtk::Box m_contentBox;
