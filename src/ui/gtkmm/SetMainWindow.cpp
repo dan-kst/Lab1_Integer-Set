@@ -42,6 +42,7 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
 // Main window setup
     set_title("Integer Set Main Menu");
     set_child(m_mainGrid);
+    set_default_size(600, 600);
 
 // Signals configurations
     m_errorDialog.signal_response().connect([this](int) { m_errorDialog.hide(); });
@@ -84,11 +85,17 @@ void SetMainWindow::setupGrid()
 }
 void SetMainWindow::refreshLocalList()
 {
+    bool isSensitive = localSetValues_.size() > 0;
     m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
     for (auto value : localSetValues_)
     {
         m_setValueStringList->append(value);
     }
+    m_removeBtn.set_sensitive(isSensitive);
+    m_editBtn.set_sensitive(isSensitive);
+    m_unionBtn.set_sensitive(isSensitive);
+    m_interBtn.set_sensitive(isSensitive);
+    m_diffBtn.set_sensitive(isSensitive);
 }
 
 

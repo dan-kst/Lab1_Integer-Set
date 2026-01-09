@@ -15,6 +15,7 @@ LoadSetDialog::LoadSetDialog(Gtk::Window& parent, std::shared_ptr<WrapCore> core
     set_transient_for(parent);
     set_title("Load Set");
     set_modal(true);
+    set_default_size(400, 400);
 
     get_content_area()->append(m_mainGrid);
     add_button("Cancel", Gtk::ResponseType::CANCEL);
@@ -66,11 +67,13 @@ void LoadSetDialog::setupGrid()
 void LoadSetDialog::refreshDbList()
 {
     auto dbSetIds = core_->getIdList();
+    bool isSensitive = dbSetIds.size() > 0;
     m_setsIdList->splice(0, m_setsIdList->get_n_items(), {});
     for (auto id : dbSetIds)
     {
         m_setsIdList->append(std::to_string(id));
     }
+    m_removeBtn.set_sensitive(isSensitive);
 }
 
 // ColumnView factories
