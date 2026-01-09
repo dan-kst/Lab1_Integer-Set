@@ -5,6 +5,7 @@
 #include <sstream>
 #include "./ui/common/WrapCore.hpp"
 #include "./ui/gtkmm/CreateSetDialog.hpp"
+#include "./ui/gtkmm/LoadSetDialog.hpp"
 
 class SetMainWindow : public Gtk::Window
 {
@@ -41,6 +42,7 @@ private:
     void refreshLocalList();
 // Signals
     void on_create_clicked();
+    void on_load_clicked();
 
 public:
     SetMainWindow(std::shared_ptr<WrapCore> core);

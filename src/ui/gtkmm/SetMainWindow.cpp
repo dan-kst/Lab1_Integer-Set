@@ -73,6 +73,7 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     m_errorDialog.signal_response().connect([this](int) { m_errorDialog.hide(); });
     m_infoDialog.signal_response().connect([this](int) { m_infoDialog.hide(); });
     m_createBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_create_clicked));
+    m_loadBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_load_clicked));
 }
 
 // ColumnView helper functions
@@ -137,4 +138,22 @@ void SetMainWindow::on_create_clicked()
         }
     );
     createDialog->show();
+}
+void SetMainWindow::on_load_clicked()
+{
+    auto loadDialog = Gtk::make_managed<LoadSetDialog>(*this, core_);
+    
+    loadDialog->signal_response().connect(
+        [this, loadDialog](int response_id)
+        {
+            if (response_id == Gtk::ResponseType::OK)
+            {
+                m_infoDialog.set_message("Success!");
+                m_infoDialog.set_secondary_text("Set was loaded to your list");
+                m_infoDialog.show();
+            }
+            loadDialog->hide();
+        }
+    );
+    loadDialog->show();
 }
