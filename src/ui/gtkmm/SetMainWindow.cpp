@@ -20,65 +20,78 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
         m_errorDialog(*this, "Error", false, Gtk::MessageType::ERROR, Gtk::ButtonsType::OK, true),
         m_infoDialog(*this, "Info", false, Gtk::MessageType::INFO, Gtk::ButtonsType::OK, true)
 {
-    set_title("Integer Set Main Menu");
-    set_child(m_mainGrid);
-
-    m_mainGrid.set_margin(15);
-    m_mainGrid.set_row_spacing(10);
-    m_mainGrid.set_column_spacing(10);
-
-    // Local operations layout setup
-    m_localOperationsBox.append(m_removeBtn);
-    m_localOperationsBox.append(m_editBtn);
-    m_localOperationsBox.set_halign(Gtk::Align::CENTER);
-
-    // Database operations layout setup
-    m_dbOperationsBox.append(m_saveBtn);
-    m_dbOperationsBox.append(m_loadBtn);
-    m_dbOperationsBox.set_halign(Gtk::Align::END);
-
-    // Set operations layout setup
-    m_setOperationsBox.append(m_unionBtn);
-    m_setOperationsBox.append(m_interBtn);
-    m_setOperationsBox.append(m_diffBtn);
-
-    // Initialize the list model
-    m_setValueStringList = Gtk::StringList::create({});
-    refreshLocalList();
-    auto selection_model = Gtk::SingleSelection::create(m_setValueStringList);
-    m_setListView.set_model(selection_model);
-    // Create the Value Column
-    auto column = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
-    column->set_expand();
-    m_setListView.append_column(column);
-    // Add to layout
+// ColumnView layout setup
+    setupColumns();
     m_setsWindow.set_child(m_setListView);
     m_setsWindow.set_policy(Gtk::PolicyType::NEVER, Gtk::PolicyType::AUTOMATIC);
     m_setsWindow.set_expand();
+// Local operations layout setup
+    m_localOperationsBox.append(m_removeBtn);
+    m_localOperationsBox.append(m_editBtn);
+    m_localOperationsBox.set_halign(Gtk::Align::CENTER);
+// Database operations layout setup
+    m_dbOperationsBox.append(m_saveBtn);
+    m_dbOperationsBox.append(m_loadBtn);
+    m_dbOperationsBox.set_halign(Gtk::Align::END);
+// Set operations layout setup
+    m_setOperationsBox.append(m_unionBtn);
+    m_setOperationsBox.append(m_interBtn);
+    m_setOperationsBox.append(m_diffBtn);
+// Grid layout
+    setupGrid();
+// Main window setup
+    set_title("Integer Set Main Menu");
+    set_child(m_mainGrid);
 
-    // Row 0: CRUD operations
-    m_mainGrid.attach(m_createBtn, 0, 0, 1, 1);
-    m_createBtn.set_halign(Gtk::Align::START);
-    m_mainGrid.attach(m_localOperationsBox, 1, 0, 2, 1);
-    m_mainGrid.attach(m_dbOperationsBox, 3, 0, 1, 1);
-
-    // Row 1: Local list of integer sets
-    m_mainGrid.attach(m_setsWindow, 0, 1, 4, 1);
-
-    // Row 2: Math operations
-    m_mainGrid.attach(m_setOperationsBox, 0, 2, 3, 1);
-    
-    // Row 3: Math operations result
-    m_mainGrid.attach(m_resultLabel, 0, 4, 4, 1);
-
-    // Configure buttons click signals
+// Signals configurations
     m_errorDialog.signal_response().connect([this](int) { m_errorDialog.hide(); });
     m_infoDialog.signal_response().connect([this](int) { m_infoDialog.hide(); });
     m_createBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_create_clicked));
     m_loadBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_load_clicked));
 }
 
-// ColumnView helper functions
+
+// Helper functions
+void SetMainWindow::setupColumns()
+{
+// --- List of values ---
+    m_setValueStringList = Gtk::StringList::create({});
+    refreshLocalList();
+    auto selection_model = Gtk::SingleSelection::create(m_setValueStringList);
+    m_setListView.set_model(selection_model);
+// --- Values Column ---
+    auto valueColumn = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
+    valueColumn->set_expand();
+    m_setListView.append_column(valueColumn);
+}
+void SetMainWindow::setupGrid()
+{
+    m_mainGrid.set_margin(15);
+    m_mainGrid.set_row_spacing(10);
+    m_mainGrid.set_column_spacing(10);
+    // Row 0: CRUD operations
+    m_mainGrid.attach(m_createBtn, 0, 0, 1, 1);
+    m_createBtn.set_halign(Gtk::Align::START);
+    m_mainGrid.attach(m_localOperationsBox, 1, 0, 2, 1);
+    m_mainGrid.attach(m_dbOperationsBox, 3, 0, 1, 1);
+    // Row 1: Local list of integer sets
+    m_mainGrid.attach(m_setsWindow, 0, 1, 4, 1);
+    // Row 2: Math operations
+    m_mainGrid.attach(m_setOperationsBox, 0, 2, 3, 1);
+    // Row 3: Math operations result
+    m_mainGrid.attach(m_resultLabel, 0, 4, 4, 1);
+}
+void SetMainWindow::refreshLocalList()
+{
+    m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
+    for (auto value : localSetValues_)
+    {
+        m_setValueStringList->append(value);
+    }
+}
+
+
+// ColumnView factory
 Glib::RefPtr<Gtk::SignalListItemFactory> SetMainWindow::createValueColumn()
 {
     auto factory = Gtk::SignalListItemFactory::create();
@@ -101,14 +114,6 @@ Glib::RefPtr<Gtk::SignalListItemFactory> SetMainWindow::createValueColumn()
         }
     );
     return factory;
-}
-void SetMainWindow::refreshLocalList()
-{
-    m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
-    for (auto value : localSetValues_)
-    {
-        m_setValueStringList->append(value);
-    }
 }
 
 

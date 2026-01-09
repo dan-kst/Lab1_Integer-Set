@@ -37,9 +37,12 @@ private:
 // Module Widgets
     Gtk::MessageDialog m_errorDialog;
     Gtk::MessageDialog m_infoDialog;
-// ColumnView helper functions
-    Glib::RefPtr<Gtk::SignalListItemFactory> createValueColumn();
+// Helper functions
+    void setupColumns();
+    void setupGrid();
     void refreshLocalList();
+// ColumnView factory
+    Glib::RefPtr<Gtk::SignalListItemFactory> createValueColumn();
 // Signals
     void on_create_clicked();
     void on_load_clicked();
