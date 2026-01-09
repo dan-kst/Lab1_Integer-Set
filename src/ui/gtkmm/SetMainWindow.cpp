@@ -23,8 +23,6 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     set_title("Integer Set Main Menu");
     set_child(m_mainGrid);
 
-    // Minimal sizing: make the window only as large as its children
-    set_resizable(false); 
     m_mainGrid.set_margin(15);
     m_mainGrid.set_row_spacing(10);
     m_mainGrid.set_column_spacing(10);
@@ -32,10 +30,12 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     // Local operations layout setup
     m_localOperationsBox.append(m_removeBtn);
     m_localOperationsBox.append(m_editBtn);
+    m_localOperationsBox.set_halign(Gtk::Align::CENTER);
 
     // Database operations layout setup
     m_dbOperationsBox.append(m_saveBtn);
     m_dbOperationsBox.append(m_loadBtn);
+    m_dbOperationsBox.set_halign(Gtk::Align::END);
 
     // Set operations layout setup
     m_setOperationsBox.append(m_unionBtn);
@@ -49,6 +49,7 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     m_setListView.set_model(selection_model);
     // Create the Value Column
     auto column = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
+    column->set_expand();
     m_setListView.append_column(column);
     // Add to layout
     m_setsWindow.set_child(m_setListView);
@@ -57,8 +58,9 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
 
     // Row 0: CRUD operations
     m_mainGrid.attach(m_createBtn, 0, 0, 1, 1);
-    m_mainGrid.attach(m_localOperationsBox, 1, 0, 1, 1);
-    m_mainGrid.attach(m_dbOperationsBox, 2, 0, 1, 1);
+    m_createBtn.set_halign(Gtk::Align::START);
+    m_mainGrid.attach(m_localOperationsBox, 1, 0, 2, 1);
+    m_mainGrid.attach(m_dbOperationsBox, 3, 0, 1, 1);
 
     // Row 1: Local list of integer sets
     m_mainGrid.attach(m_setsWindow, 0, 1, 4, 1);
@@ -100,9 +102,11 @@ Glib::RefPtr<Gtk::SignalListItemFactory> SetMainWindow::createValueColumn()
     );
     return factory;
 }
-void SetMainWindow::refreshLocalList() {
+void SetMainWindow::refreshLocalList()
+{
     m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
-    for (auto value : localSetValues_) {
+    for (auto value : localSetValues_)
+    {
         m_setValueStringList->append(value);
     }
 }
