@@ -157,9 +157,21 @@ void SetMainWindow::on_load_clicked()
         {
             if (response_id == Gtk::ResponseType::OK)
             {
-                m_infoDialog.set_message("Success!");
-                m_infoDialog.set_secondary_text("Set was loaded to your list");
-                m_infoDialog.show();
+                std::string selectedSet(loadDialog->getSelectedValue());
+                if(!selectedSet.empty())
+                {
+                    localSetValues_.push_back(core_->getSetString());
+                    refreshLocalList();
+                    m_infoDialog.set_message("Success!");
+                    m_infoDialog.set_secondary_text("Set was load to your list");
+                    m_infoDialog.show();
+                }
+                else
+                {
+                    m_errorDialog.set_message("Error!");
+                    m_errorDialog.set_secondary_text("Failed to load a set!");
+                    m_errorDialog.show();
+                }
             }
             loadDialog->hide();
         }
