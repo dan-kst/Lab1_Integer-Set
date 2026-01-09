@@ -33,6 +33,7 @@ private:
 // Display widgets
     Gtk::Label m_resultLabel;
     Gtk::ColumnView m_setListView;
+    Glib::RefPtr<Gtk::SingleSelection> m_selection;
     Glib::RefPtr<Gtk::StringList> m_setValueStringList;
 // Module Widgets
     Gtk::MessageDialog m_errorDialog;
@@ -46,6 +47,7 @@ private:
 // Signals
     void on_create_clicked();
     void on_load_clicked();
+    void on_remove_clicked();
 
 public:
     SetMainWindow(std::shared_ptr<WrapCore> core);

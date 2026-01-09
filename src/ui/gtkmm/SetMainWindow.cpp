@@ -48,6 +48,7 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     m_infoDialog.signal_response().connect([this](int) { m_infoDialog.hide(); });
     m_createBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_create_clicked));
     m_loadBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_load_clicked));
+    m_removeBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_remove_clicked));
 }
 
 
@@ -57,8 +58,8 @@ void SetMainWindow::setupColumns()
 // --- List of values ---
     m_setValueStringList = Gtk::StringList::create({});
     refreshLocalList();
-    auto selection_model = Gtk::SingleSelection::create(m_setValueStringList);
-    m_setListView.set_model(selection_model);
+    m_selection = Gtk::SingleSelection::create(m_setValueStringList);
+    m_setListView.set_model(m_selection);
 // --- Values Column ---
     auto valueColumn = Gtk::ColumnViewColumn::create(s_valueColumnName_, createValueColumn());
     valueColumn->set_expand();
@@ -177,4 +178,46 @@ void SetMainWindow::on_load_clicked()
         }
     );
     loadDialog->show();
+}
+void SetMainWindow::on_remove_clicked()
+{
+    if(localSetValues_.size() > 0)
+    {
+        auto m_confirmDialog = Gtk::make_managed<Gtk::MessageDialog>(*this, "Confirm", false, Gtk::MessageType::WARNING, Gtk::ButtonsType::YES_NO, true);
+        m_confirmDialog->set_message("Confirm delete operation");
+        m_confirmDialog->set_secondary_text("Are you sure you want delete this item?");
+        m_confirmDialog->signal_response().connect(
+            [this, m_confirmDialog](int response_id)
+            {
+                if (response_id == Gtk::ResponseType::YES)
+                {
+                    auto selectedItemId = m_selection->get_selected();
+                    if (selectedItemId != GTK_INVALID_LIST_POSITION)
+                    {
+                        size_t count = 0;
+                        std::vector<std::string>::iterator it = localSetValues_.begin();
+                        while(it != localSetValues_.end())
+                        {
+                            if (count == selectedItemId)
+                            {
+                                it = localSetValues_.erase(it);
+                            }
+                            else
+                            {
+                                it++;
+                            }
+                            count++;
+                        }
+                        refreshLocalList();
+                        m_infoDialog.set_message("Success!");
+                        m_infoDialog.set_secondary_text("Set was removed to your list");
+                        m_infoDialog.show();
+                    }
+                }
+                m_confirmDialog->hide();
+            }
+        );
+        m_confirmDialog->show();
+        
+    }
 }
