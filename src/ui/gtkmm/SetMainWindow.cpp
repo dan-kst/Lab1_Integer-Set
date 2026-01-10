@@ -50,6 +50,7 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     m_createBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_create_clicked));
     m_loadBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_load_clicked));
     m_removeBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_remove_clicked));
+    m_editBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_edit_clicked));
 }
 
 
@@ -228,3 +229,39 @@ void SetMainWindow::on_remove_clicked()
         
     }
 }
+void SetMainWindow::on_edit_clicked()
+{
+    auto selectedIdx = m_selection->get_selected();
+    if (selectedIdx == GTK_INVALID_LIST_POSITION) return;
+
+    // 1. Get the JSON string: "[1,2,3]"
+    std::string jsonString = localSetValues_[selectedIdx];
+
+    auto editDialog = Gtk::make_managed<CreateSetDialog>(*this, core_->parseJson(jsonString));
+    editDialog->signal_response().connect(
+        [this, editDialog, selectedIdx](int response)
+        {
+            if (response == Gtk::ResponseType::OK)
+            {
+                std::istringstream iss(editDialog->getInputValue());
+                if (core_->createSet(iss))
+                {
+                    localSetValues_[selectedIdx] = core_->getSetJson();
+                    refreshLocalList();
+                    m_infoDialog.set_message("Success!");
+                    m_infoDialog.set_secondary_text("Set in your list was updated!");
+                    m_infoDialog.show();
+                }
+                else
+                {
+                    m_errorDialog.set_message("Error!");
+                    m_errorDialog.set_secondary_text("Failed to update a set!");
+                    m_errorDialog.show();
+                }
+            }
+            editDialog->hide();
+        }
+    );
+    editDialog->show();
+}
+

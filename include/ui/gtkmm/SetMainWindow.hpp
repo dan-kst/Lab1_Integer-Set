@@ -48,6 +48,7 @@ private:
     void on_create_clicked();
     void on_load_clicked();
     void on_remove_clicked();
+    void on_edit_clicked();
 
 public:
     SetMainWindow(std::shared_ptr<WrapCore> core);
