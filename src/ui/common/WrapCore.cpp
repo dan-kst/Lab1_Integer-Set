@@ -41,6 +41,16 @@ std::string WrapCore::getSetJson(size_t id)
     }
     return "{}";
 }
+std::string WrapCore::parseJson(const std::string& jsonString)
+{
+    auto j = nlohmann::json::parse(jsonString);
+    std::string spaceString;
+    for (auto& item : j) {
+        if (!spaceString.empty()) spaceString += " ";
+        spaceString += item.dump();
+    }
+    return spaceString;
+}
 // handleCreate "worker" function
 bool WrapCore::createSet(std::istringstream& input)
 {

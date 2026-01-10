@@ -26,6 +26,7 @@ public:
     void clearSet();
     std::string getSetJson();
     std::string getSetJson(size_t id);
+    std::string parseJson(const std::string& jsonString);
 // handleCreate "worker" function
     bool createSet(std::istringstream& input);
 // handleUpdate "worker" function
