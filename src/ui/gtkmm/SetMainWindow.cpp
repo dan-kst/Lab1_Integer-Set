@@ -51,6 +51,9 @@ SetMainWindow::SetMainWindow(std::shared_ptr<WrapCore> core)
     m_loadBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_load_clicked));
     m_removeBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_remove_clicked));
     m_editBtn.signal_clicked().connect(sigc::mem_fun(*this, &SetMainWindow::on_edit_clicked));
+    m_unionBtn.signal_clicked().connect([this] { on_operation_clicked(SetOperationType::Union); });
+    m_interBtn.signal_clicked().connect([this] { on_operation_clicked(SetOperationType::Intersect); });
+    m_diffBtn.signal_clicked().connect([this] { on_operation_clicked(SetOperationType::Difference); });
 }
 
 
@@ -264,4 +267,19 @@ void SetMainWindow::on_edit_clicked()
     );
     editDialog->show();
 }
-
+void SetMainWindow::on_operation_clicked(SetOperationType op)
+{
+    try
+    {
+        std::string resultStr = core_->performBatchOperation(localSetValues_, op);
+        m_resultLabel.set_text(resultStr);
+        m_infoDialog.set_message("Operation Complete");
+        m_infoDialog.set_secondary_text("Processed " + std::to_string(localSetValues_.size()) + " sets.");
+        m_infoDialog.show();
+    }
+    catch (const std::exception& e)
+    {
+        m_errorDialog.set_secondary_text(e.what());
+        m_errorDialog.show();
+    }
+}
