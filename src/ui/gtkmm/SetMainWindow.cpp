@@ -89,17 +89,18 @@ void SetMainWindow::setupGrid()
 }
 void SetMainWindow::refreshLocalList()
 {
-    bool isSensitive = localSetValues_.size() > 0;
+    bool isLocalOpSensitive = localSetValues_.size() > 0;
+    bool isSetOpSensitive = localSetValues_.size() > 1;
     m_setValueStringList->splice(0, m_setValueStringList->get_n_items(), {});
     for (auto value : localSetValues_)
     {
         m_setValueStringList->append(value);
     }
-    m_removeBtn.set_sensitive(isSensitive);
-    m_editBtn.set_sensitive(isSensitive);
-    m_unionBtn.set_sensitive(isSensitive);
-    m_interBtn.set_sensitive(isSensitive);
-    m_diffBtn.set_sensitive(isSensitive);
+    m_removeBtn.set_sensitive(isLocalOpSensitive);
+    m_editBtn.set_sensitive(isLocalOpSensitive);
+    m_unionBtn.set_sensitive(isSetOpSensitive);
+    m_interBtn.set_sensitive(isSetOpSensitive);
+    m_diffBtn.set_sensitive(isSetOpSensitive);
 }
 
 
