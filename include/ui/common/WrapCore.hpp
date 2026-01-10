@@ -51,5 +51,6 @@ public:
     bool unionSets(size_t setOtherId);
     bool intersectSets(size_t setOtherId);
     bool differenceSets(size_t setOtherId);
+    std::string performBatchOperation(const std::vector<std::string>& localSets, SetOperationType op);
 };
 #endif

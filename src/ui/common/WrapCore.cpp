@@ -188,3 +188,29 @@ bool WrapCore::differenceSets(size_t setOtherId)
     }
     return success;
 }
+std::string WrapCore::performBatchOperation(const std::vector<std::string>& localSets, SetOperationType op)
+{
+    if (localSets.empty() || op == SetOperationType::None) return "No Data";
+
+    auto result = stringToSet(localSets[0]);
+    auto nextSet = std::make_unique<IntegerSet>();
+    for (size_t i = 1; i < localSets.size(); i++)
+    {
+        *nextSet = *(stringToSet(localSets[i]));
+        switch (op)
+        {
+            case SetOperationType::None:
+                break;
+            case SetOperationType::Union:
+                *result = *(result->unite(*nextSet));
+                break;
+            case SetOperationType::Intersect:
+                result = result->intersect(*nextSet);
+                break;
+            case SetOperationType::Difference:
+                result = result->difference(*nextSet);
+                break;
+        }
+    }
+    return SetSerializer::to_json(*result).at(SetSerializer::valueName).dump();
+}
