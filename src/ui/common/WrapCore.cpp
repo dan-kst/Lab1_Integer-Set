@@ -86,6 +86,7 @@ bool WrapCore::createSet(std::istringstream& input)
     else
     {
         *currentSet_ = *set;
+        setId_ = 0;
         return true;
     }
 }
@@ -126,6 +127,15 @@ size_t WrapCore::saveSet()
     if(!setId_ && currentSet_->size() > 0)
     {
         setId_ = repo_->save(*currentSet_);
+        return setId_;
+    }
+    return 0;
+}
+size_t WrapCore::saveSet(const IntegerSet& set)
+{
+    if(set.size() > 0)
+    {
+        setId_ = repo_->save(set);
         return setId_;
     }
     return 0;

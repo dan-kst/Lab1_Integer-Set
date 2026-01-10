@@ -44,6 +44,7 @@ public:
     bool removeSet(size_t id);
 // handleSaveToDb "worker" function
     size_t saveSet();
+    size_t saveSet(const IntegerSet& set);
 // handleLoadFromDb "worker" functions
     bool loadSet(size_t id);
     bool loadSet(size_t id, IntegerSet& set);
