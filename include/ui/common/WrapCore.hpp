@@ -24,8 +24,8 @@ public:
 // showSetsList "worker" function
     std::vector<size_t> getIdList();
     void clearSet();
-    std::string getSetString();
-    std::string getSetString(size_t id);
+    std::string getSetJson();
+    std::string getSetJson(size_t id);
 // handleCreate "worker" function
     bool createSet(std::istringstream& input);
 // handleUpdate "worker" function

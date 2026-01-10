@@ -19,3 +19,23 @@ CreateSetDialog::CreateSetDialog(Gtk::Window& parent)
     add_button("Cancel", Gtk::ResponseType::CANCEL);
     add_button("Confirm", Gtk::ResponseType::OK);
 }
+CreateSetDialog::CreateSetDialog(Gtk::Window& parent, const std::string& setInput)
+    :
+    m_contentBox(Gtk::Orientation::VERTICAL, 10),
+    m_label("Enter integers separated by spaces:")
+{
+    set_transient_for(parent);
+    set_title("Update Set");
+    set_modal(true);
+    set_default_size(600, 200);
+    set_resizable(false);
+
+    get_content_area()->append(m_contentBox);
+    m_contentBox.set_margin(20);
+    m_contentBox.append(m_label);
+    m_contentBox.append(m_entry);
+    m_entry.set_text(setInput);
+
+    add_button("Cancel", Gtk::ResponseType::CANCEL);
+    add_button("Confirm", Gtk::ResponseType::OK);
+}

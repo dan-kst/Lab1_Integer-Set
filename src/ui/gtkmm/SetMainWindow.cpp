@@ -138,7 +138,7 @@ void SetMainWindow::on_create_clicked()
                 std::istringstream iss(createDialog->getInputValue());
                 if(core_->createSet(iss))
                 {
-                    localSetValues_.push_back(core_->getSetString());
+                    localSetValues_.push_back(core_->getSetJson());
                     refreshLocalList();
                     m_infoDialog.set_message("Success!");
                     m_infoDialog.set_secondary_text("Set was added to your list");
@@ -168,7 +168,7 @@ void SetMainWindow::on_load_clicked()
                 std::string selectedSet(loadDialog->getSelectedValue());
                 if(!selectedSet.empty())
                 {
-                    localSetValues_.push_back(core_->getSetString());
+                    localSetValues_.push_back(core_->getSetJson());
                     refreshLocalList();
                     m_infoDialog.set_message("Success!");
                     m_infoDialog.set_secondary_text("Set was load to your list");

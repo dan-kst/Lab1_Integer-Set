@@ -25,7 +25,7 @@ void WrapCore::clearSet()
     currentSet_->clear();
     setId_ = 0;
 }
-std::string WrapCore::getSetString()
+std::string WrapCore::getSetJson()
 {
     if(currentSet_->size() > 0)
     {
@@ -33,7 +33,7 @@ std::string WrapCore::getSetString()
     }
     return "";
 }
-std::string WrapCore::getSetString(size_t id)
+std::string WrapCore::getSetJson(size_t id)
 {
     auto tempSet = repo_->load(id);
     if (tempSet) {

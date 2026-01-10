@@ -34,7 +34,7 @@ std::string LoadSetDialog::getSelectedValue()
         size_t id = std::stoul(stringObj->get_string());
         if (core_->loadSet(id))
         {
-            selectedSet = core_->getSetString();
+            selectedSet = core_->getSetJson();
         }
     }
     return selectedSet;
@@ -113,7 +113,7 @@ Glib::RefPtr<Gtk::SignalListItemFactory> LoadSetDialog::createValueColumn()
             if (item && label)
             {
                 size_t id = std::stoul(item->get_string());
-                label->set_text(core_->getSetString(id)); 
+                label->set_text(core_->getSetJson(id)); 
             }
         }
     );
