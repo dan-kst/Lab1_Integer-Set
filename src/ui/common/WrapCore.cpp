@@ -5,21 +5,6 @@ WrapCore::WrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<Integer
 : repo_(repo), currentSet_(set), setId_(0) {}
 
 size_t WrapCore::getId() { return setId_; }
-// showSetsList "worker" function
-std::vector<size_t> WrapCore::getIdList()
-{
-    std::vector<size_t> idList;
-    try
-    {
-        idList = repo_->getIdAll();
-    }
-    catch(std::exception& ex)
-    {
-        std::string error = "Couldn't load list due to internal error!\n";
-        throw std::runtime_error(error + ex.what());
-    }
-    return idList;
-}
 void WrapCore::clearSet()
 {
     currentSet_->clear();
@@ -50,6 +35,38 @@ std::string WrapCore::parseJson(const std::string& jsonString)
         spaceString += item.dump();
     }
     return spaceString;
+}
+std::unique_ptr<IntegerSet> WrapCore::stringToSet(const std::string& jsonString)
+{
+    try
+    {
+        auto j = nlohmann::json::parse(jsonString);
+        // If the input is a raw array like [1,2,3], wrap it for the serializer
+        if (j.is_array()) {
+            nlohmann::json wrapper = {{SetSerializer::valueName, j}};
+            return SetSerializer::from_json(wrapper);
+        }
+        return SetSerializer::from_json(j);
+    }
+    catch (...)
+    {
+        return std::make_unique<IntegerSet>();
+    }
+}
+// showSetsList "worker" function
+std::vector<size_t> WrapCore::getIdList()
+{
+    std::vector<size_t> idList;
+    try
+    {
+        idList = repo_->getIdAll();
+    }
+    catch(std::exception& ex)
+    {
+        std::string error = "Couldn't load list due to internal error!\n";
+        throw std::runtime_error(error + ex.what());
+    }
+    return idList;
 }
 // handleCreate "worker" function
 bool WrapCore::createSet(std::istringstream& input)

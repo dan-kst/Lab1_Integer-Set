@@ -10,6 +10,13 @@
 #include "./storage/ISetRepository.hpp"
 #include "./storage/IntegerSetSerializer.hpp"
 
+enum class SetOperationType
+{
+    None,
+    Union,
+    Intersect,
+    Difference
+};
 class WrapCore
 {
 private:
@@ -20,13 +27,15 @@ public:
 // Constructor
     WrapCore(std::shared_ptr<ISetRepository> repo, std::shared_ptr<IntegerSet> set);
 
+// Helper functions
     size_t getId();
-// showSetsList "worker" function
-    std::vector<size_t> getIdList();
     void clearSet();
     std::string getSetJson();
     std::string getSetJson(size_t id);
     std::string parseJson(const std::string& jsonString);
+    std::unique_ptr<IntegerSet> stringToSet(const std::string& jsonString);
+// showSetsList "worker" function
+    std::vector<size_t> getIdList();
 // handleCreate "worker" function
     bool createSet(std::istringstream& input);
 // handleUpdate "worker" function
