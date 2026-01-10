@@ -47,6 +47,7 @@ private:
 // Signals
     void on_create_clicked();
     void on_load_clicked();
+    void on_save_clicked();
     void on_remove_clicked();
     void on_edit_clicked();
     void on_operation_clicked(SetOperationType op);
