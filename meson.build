@@ -53,6 +53,11 @@ configure_file(
     output: 'index.html',
     copy: true
 )
+configure_file(
+    input: 'include/ui/web/script.js',
+    output: 'script.js',
+    copy: true
+)
 
 test_sources = files(
     'tests/set_tests.cpp',
