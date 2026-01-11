@@ -36,6 +36,14 @@ int main()
         }
     );
 
+    CROW_ROUTE(app, "/api/sets/<uint>").methods(crow::HTTPMethod::DELETE)(
+        [&core](size_t id)
+        {
+            if (core.removeSet(id)) return crow::response(204);
+            return crow::response(404, "ID not found");
+        }
+    );
+
     CROW_ROUTE(app, "/create").methods(crow::HTTPMethod::POST)
     (
         [&core](const crow::request& req)
