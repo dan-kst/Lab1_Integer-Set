@@ -60,7 +60,38 @@ int main()
 
     CROW_ROUTE(app, "/math/<string>")
     (
-        [&core](std::string opType) { return crow::response(200, "Logic for " + opType + " goes here");}
+        [&core](const crow::request& req, std::string opType)
+        {
+            auto ids_raw = req.url_params.get("ids");
+            if (!ids_raw) return crow::response(400, "Missing 'ids' parameter");
+
+            // Parse the comma-separated string into set contents
+            std::vector<std::string> setStrings;
+            std::stringstream ss(ids_raw);
+            std::string id_str;
+            
+            while (std::getline(ss, id_str, ','))
+            {
+                try
+                {
+                    size_t id = std::stoul(id_str);
+                    std::string content = core.getSetJson(id);
+                    if (content != "{}") setStrings.push_back(content);
+                } catch (...) { continue; }
+            }
+
+            // Map string to Enum
+            SetOperationType op = SetOperationType::None;
+            if (opType == "union") op = SetOperationType::Union;
+            else if (opType == "intersect") op = SetOperationType::Intersect;
+            else if (opType == "difference") op = SetOperationType::Difference;
+
+            if (op == SetOperationType::None) return crow::response(400, "Invalid Operation");
+
+            // Use the tested logic from WrapCore
+            std::string result = core.performBatchOperation(setStrings, op);
+            return crow::response(result);
+        }
     );
 
     app.port(18080).multithreaded().run();
