@@ -27,6 +27,15 @@ int main()
         }
     );
 
+    CROW_ROUTE(app, "/sets/<uint>")(
+        [&core](size_t id)
+        {
+            std::string json = core.getSetJson(id);
+            if (json == "{}") return crow::response(404, "Not Found");
+            return crow::response(json);
+        }
+    );
+
     CROW_ROUTE(app, "/create").methods(crow::HTTPMethod::POST)
     (
         [&core](const crow::request& req)
