@@ -37,5 +37,10 @@ int main()
         }
     );
 
+    CROW_ROUTE(app, "/math/<string>")
+    (
+        [&core](std::string opType) { return crow::response(200, "Logic for " + opType + " goes here");}
+    );
+
     app.port(18080).multithreaded().run();
 }
