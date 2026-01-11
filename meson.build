@@ -48,6 +48,12 @@ ui_main_gtk = files('src/ui/gtkmm/main.cpp')
 
 ui_main_crow = files('src/ui/web/main.cpp')
 
+configure_file(
+    input: 'include/ui/web/index.html',
+    output: 'index.html',
+    copy: true
+)
+
 test_sources = files(
     'tests/set_tests.cpp',
     'tests/storage_tests.cpp',

@@ -11,7 +11,11 @@ int main()
     crow::SimpleApp app;
 
     CROW_ROUTE(app, "/")(
-        [](){ return "Integer Set Lab API is Online!";}
+        [](const crow::request&, crow::response& res)
+        {
+            res.set_static_file_info("index.html");
+            res.end();
+        }
     );
 
     CROW_ROUTE(app, "/sets")(
