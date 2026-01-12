@@ -69,5 +69,46 @@
             </div>
         </div>
     </div>
+        <script>
+        let selectedIds = new Set();
+
+        async function refreshList()
+        {
+            try
+            {
+                const res = await fetch('sets');
+                if (!res.ok) throw new Error("API Offline");
+                const ids = await res.json();
+                const body = document.getElementById('setTableBody');
+                body.innerHTML = '';
+                
+                for (const id of ids)
+                {
+                    const contentRes = await fetch(`sets/${id}`);
+                    const data = await contentRes.json();
+                    const row = document.createElement('tr');
+                    const isSelected = selectedIds.has(Number(id));
+                    
+                    row.className = `border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition-all ${isSelected ? 'selected-row' : ''}`;
+                    row.onclick = () => toggleSelection(Number(id), row);
+                    row.innerHTML = `
+                        <td class="px-8 py-4 font-mono font-bold text-blue-600">#${id}</td>
+                        <td class="px-8 py-4 text-sm font-mono text-slate-500">${JSON.stringify(data)}</td>
+                        <td class="px-8 py-4 text-right">
+                            <button onclick="deleteSet(event, ${id})" class="text-slate-300 hover:text-red-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </td>
+                    `;
+                    body.appendChild(row);
+                }
+            }
+            catch (err)
+            {
+                console.error("List update failed:", err);
+            }
+        }
+        refreshList();
+    </script>
 </body>
 </html>
