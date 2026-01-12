@@ -145,6 +145,22 @@
                 alert("Creation failed. Check input format.");
             }
         }
+
+        async function performMath(op)
+        {
+            if (selectedIds.size < 2 && op !== 'union')
+            {
+                alert("Please select at least 2 sets for this operation.");
+                return;
+            }
+            const idList = Array.from(selectedIds).join(',');
+            const res = await fetch(`math/${op}?ids=${idList}`);
+            const result = await res.json();
+            
+            const area = document.getElementById('resultArea');
+            area.innerText = `RESULT (${op.toUpperCase()}): ${JSON.stringify(result)}`;
+            area.className = "mt-4 p-4 bg-blue-50 text-blue-700 rounded-xl font-mono text-center border border-blue-200 font-bold";
+        }
         refreshList();
     </script>
 </body>
