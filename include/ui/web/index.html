@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <title>Integer Set Lab - Web</title>
+    <style>
+        .selected-row { 
+            background-color: #eff6ff !important; 
+            border-left: 4px solid #3b82f6 !important; 
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
 </head>
 <body class="bg-gray-50 min-h-screen p-4 md:p-8 text-gray-800">
     <div class="max-w-4xl mx-auto">
@@ -106,6 +114,19 @@
             catch (err)
             {
                 console.error("List update failed:", err);
+            }
+        }
+        function toggleSelection(id, row)
+        {
+            if (selectedIds.has(id))
+            {
+                selectedIds.delete(id);
+                row.classList.remove('selected-row');
+            }
+            else
+            {
+                selectedIds.add(id);
+                row.classList.add('selected-row');
             }
         }
         refreshList();
