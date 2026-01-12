@@ -116,6 +116,7 @@
                 console.error("List update failed:", err);
             }
         }
+
         function toggleSelection(id, row)
         {
             if (selectedIds.has(id))
@@ -127,6 +128,21 @@
             {
                 selectedIds.add(id);
                 row.classList.add('selected-row');
+            }
+        }
+
+        async function createSet()
+        {
+            const input = document.getElementById('setInput').value;
+            const res = await fetch('create', { method: 'POST', body: input });
+            if (res.ok)
+            {
+                document.getElementById('setInput').value = '';
+                refreshList();
+            }
+            else
+            {
+                alert("Creation failed. Check input format.");
             }
         }
         refreshList();
