@@ -7,12 +7,15 @@ project('Lab1_IntegerSet', 'cpp',
 gtest_proj = subproject('gtest')
 gtest_dep = gtest_proj.get_variable('gtest_main_dep')
 gmock_dep = gtest_proj.get_variable('gmock_dep')
+
 gtkmm_dep = dependency('gtkmm-4.0', version: '>= 4.6.0')
 
 json_proj = subproject('nlohmann_json')
 json_dep = dependency('nlohmann_json', fallback : ['nlohmann_json', 'nlohmann_json_dep'])
 
-# Add PostgreSQL client library
+crow_proj = subproject('crow')
+crow_dep = crow_proj.get_variable('crow_dep')
+
 pqxx_dep = dependency('libpqxx')
 
 # Add threads for parallelization later and DB drivers
@@ -36,8 +39,20 @@ ui_sources_common = files(
 ui_logic_console = files('src/ui/console/ConsoleWrap.cpp')
 ui_main_console = files('src/ui/console/main.cpp')
 
-ui_logic_gtk = files('src/ui/gtkmm/SetWindow.cpp')
+ui_logic_gtk = files(
+    'src/ui/gtkmm/SetMainWindow.cpp',
+    'src/ui/gtkmm/CreateSetDialog.cpp',
+    'src/ui/gtkmm/LoadSetDialog.cpp'
+)
 ui_main_gtk = files('src/ui/gtkmm/main.cpp')
+
+ui_main_crow = files('src/ui/web/main.cpp')
+
+configure_file(
+    input: 'include/ui/web/index.html',
+    output: 'index.html',
+    copy: true
+)
 
 test_sources = files(
     'tests/set_tests.cpp',
@@ -63,6 +78,13 @@ executable('lab1_console',
 # Build the GUI executable
 executable('lab1_gtkmm',
     ui_main_gtk,
+    link_with : lib_set,
+    include_directories : inc,
+    dependencies : [gtkmm_dep]
+)
+# Build the web executable
+executable('lab1_web',
+    ui_main_crow,
     link_with : lib_set,
     include_directories : inc,
     dependencies : [gtkmm_dep]

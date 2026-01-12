@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Integer Set Lab - Web</title>
+    <style>
+        .selected-row { 
+            background-color: #eff6ff !important; 
+            border-left: 4px solid #3b82f6 !important; 
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8 text-gray-800">
+    <div class="max-w-4xl mx-auto">
+        <header class="mb-8 flex justify-between items-end">
+            <div>
+                <h1 class="text-3xl font-bold text-gray-900 tracking-tight">Integer Set Lab</h1>
+                <p class="text-gray-500">Hexagonal Architecture - Web Wrap</p>
+            </div>
+            <div id="status" class="text-xs font-mono px-2 py-1 bg-green-100 text-green-700 rounded">API ONLINE</div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <!-- Left Column: Create -->
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-4">Create Set</h2>
+                <input type="text" id="setInput" placeholder="e.g. 1 5 10 42" 
+                       class="w-full px-4 py-2 border rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition mb-3">
+                <button onclick="createSet()" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-xl transition shadow-sm active:scale-95">
+                    Save to Database
+                </button>
+            </div>
+
+            <!-- Middle Column: DB List -->
+            <div class="md:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[400px]">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400">Database Entries</h2>
+                    <button onclick="refreshList()" class="text-blue-600 text-sm hover:underline">Refresh</button>
+                </div>
+                <div class="overflow-y-auto flex-grow rounded-xl border border-gray-50">
+                    <table class="w-full text-left">
+                        <thead class="sticky top-0 bg-gray-50 text-xs text-gray-500">
+                            <tr>
+                                <th class="p-3">ID</th>
+                                <th class="p-3">Elements</th>
+                                <th class="p-3 text-right">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="setTableBody">
+                            <!-- Rows loaded via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Bottom: Batch Math -->
+            <div class="md:col-span-3 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div>
+                        <h2 class="text-sm font-semibold uppercase tracking-wider text-gray-400 mb-1">Batch Operations</h2>
+                        <p class="text-xs text-gray-500 italic">Select multiple sets in the list above to perform math.</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="performMath('union')" class="px-6 py-2 bg-gray-800 text-white rounded-xl hover:bg-black transition">Union</button>
+                        <button onclick="performMath('intersect')" class="px-6 py-2 bg-gray-800 text-white rounded-xl hover:bg-black transition">Intersect</button>
+                        <button onclick="performMath('difference')" class="px-6 py-2 bg-gray-800 text-white rounded-xl hover:bg-black transition">Difference</button>
+                    </div>
+                </div>
+                <div id="resultArea" class="mt-4 p-4 bg-gray-50 rounded-xl font-mono text-center text-gray-400 border border-dashed border-gray-200">
+                    RESULT: NO CALCULATION PERFORMED
+                </div>
+            </div>
+        </div>
+    </div>
+        <script>
+        let selectedIds = new Set();
+
+        async function refreshList()
+        {
+            try
+            {
+                const res = await fetch('sets');
+                if (!res.ok) throw new Error("API Offline");
+                const ids = await res.json();
+                const body = document.getElementById('setTableBody');
+                body.innerHTML = '';
+                
+                for (const id of ids)
+                {
+                    const contentRes = await fetch(`sets/${id}`);
+                    const data = await contentRes.json();
+                    const row = document.createElement('tr');
+                    const isSelected = selectedIds.has(Number(id));
+                    
+                    row.className = `border-b border-slate-50 cursor-pointer hover:bg-slate-50 transition-all ${isSelected ? 'selected-row' : ''}`;
+                    row.onclick = () => toggleSelection(Number(id), row);
+                    row.innerHTML = `
+                        <td class="px-8 py-4 font-mono font-bold text-blue-600">#${id}</td>
+                        <td class="px-8 py-4 text-sm font-mono text-slate-500">${JSON.stringify(data)}</td>
+                        <td class="px-8 py-4 text-right">
+                            <button onclick="deleteSet(event, ${id})" class="text-slate-300 hover:text-red-500 transition-colors">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                            </button>
+                        </td>
+                    `;
+                    body.appendChild(row);
+                }
+            }
+            catch (err)
+            {
+                console.error("List update failed:", err);
+            }
+        }
+
+        function toggleSelection(id, row)
+        {
+            if (selectedIds.has(id))
+            {
+                selectedIds.delete(id);
+                row.classList.remove('selected-row');
+            }
+            else
+            {
+                selectedIds.add(id);
+                row.classList.add('selected-row');
+            }
+        }
+
+        async function createSet()
+        {
+            const input = document.getElementById('setInput').value;
+            const res = await fetch('create', { method: 'POST', body: input });
+            if (res.ok)
+            {
+                document.getElementById('setInput').value = '';
+                refreshList();
+            }
+            else
+            {
+                alert("Creation failed. Check input format.");
+            }
+        }
+
+        async function performMath(op)
+        {
+            if (selectedIds.size < 2 && op !== 'union')
+            {
+                alert("Please select at least 2 sets for this operation.");
+                return;
+            }
+            const idList = Array.from(selectedIds).join(',');
+            const res = await fetch(`math/${op}?ids=${idList}`);
+            const result = await res.json();
+            
+            const area = document.getElementById('resultArea');
+            area.innerText = `RESULT (${op.toUpperCase()}): ${JSON.stringify(result)}`;
+            area.className = "mt-4 p-4 bg-blue-50 text-blue-700 rounded-xl font-mono text-center border border-blue-200 font-bold";
+        }
+        refreshList();
+    </script>
+</body>
+</html>

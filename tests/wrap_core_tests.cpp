@@ -54,3 +54,36 @@ TEST_F(WrapCoreTest, LoadSetReturnsFalseIfNotFound) {
     EXPECT_FALSE(success);
     // Ensure the current set wasn't cleared or corrupted by a failed load
 }
+TEST_F(WrapCoreTest, StringToSetParserWorks) {
+    std::string input = "[1, 2, 3]";
+    auto set = core->stringToSet(input);
+    
+    EXPECT_EQ(set->size(), 3);
+    EXPECT_TRUE(set->contains(1));
+    EXPECT_TRUE(set->contains(2));
+    EXPECT_TRUE(set->contains(3));
+}
+TEST_F(WrapCoreTest, BatchUnionWorks) {
+    std::vector<std::string> sets = {"[1, 2]", "[2, 3]", "[4]"};
+    
+    std::string result = core->performBatchOperation(sets, SetOperationType::Union);
+    
+    // Union of {1,2}, {2,3}, {4} is {1,2,3,4}
+    EXPECT_EQ(result, "[1,2,3,4]");
+}
+TEST_F(WrapCoreTest, BatchIntersectionWorks) {
+    std::vector<std::string> sets = {"[1, 2, 3]", "[2, 3, 4]", "[3, 5]"};
+    
+    std::string result = core->performBatchOperation(sets, SetOperationType::Intersect);
+    
+    // Intersection of {1,2,3}, {2,3,4}, {3,5} is {3}
+    EXPECT_EQ(result, "[3]");
+}
+TEST_F(WrapCoreTest, BatchDifferenceWorks) {
+    std::vector<std::string> sets = {"[1, 2, 3, 4]", "[1]", "[2]"};
+    
+    std::string result = core->performBatchOperation(sets, SetOperationType::Difference);
+    
+    // Difference: ({1,2,3,4} - {1}) - {2} is {3,4}
+    EXPECT_EQ(result, "[3,4]");
+}
